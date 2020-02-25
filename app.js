@@ -9,7 +9,9 @@ const mongoose = require('mongoose');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const playgroundRouter = require('./routes/playground');
-const ordersRouter = require('./routes/orders');
+const groupRouter = require('./routes/group');
+const eventRouter = require('./routes/event');
+
 
 /** OUR MIDDLEWARE */
 // const { setCors } = require('./middleware/security');
@@ -58,7 +60,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/playground', playgroundRouter);
-app.use('/orders', ordersRouter);
+app.use('/group', groupRouter);
+app.use('/events', eventRouter);
 
 /** ERROR HANDLING */
 app.use(function(req, res, next) {

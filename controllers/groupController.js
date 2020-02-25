@@ -1,7 +1,7 @@
-const Order = require('../models/Order');
+const Order = require('../models/Group');
 const createError = require('http-errors');
 
-exports.getOrders = async (req, res, next) => {
+exports.getAllGroup = async (req, res, next) => {
   // An Admin should get everybody's orders , a user only theirs
   try {
     const orders = await Order.find().populate('records.record', ' -__v');
@@ -11,11 +11,10 @@ exports.getOrders = async (req, res, next) => {
   }
 };
 
-exports.getOrder = async (req, res, next) => {
+exports.getGroup = async (req, res, next) => {
   try {
     const order = await Order.findById(req.params.id)
-      .populate('records.record')
-      .populate('user', 'userName fullName email');
+      .populate('user', ' firstName lastName');
     if (!order) throw new createError.NotFound();
     res.status(200).send(order);
   } catch (e) {
@@ -23,7 +22,7 @@ exports.getOrder = async (req, res, next) => {
   }
 };
 
-exports.deleteOrder = async (req, res, next) => {
+exports.deleteGroup = async (req, res, next) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);
     if (!order) throw new createError.NotFound();
@@ -33,7 +32,7 @@ exports.deleteOrder = async (req, res, next) => {
   }
 };
 
-exports.updateOrder = async (req, res, next) => {
+exports.updateGroup = async (req, res, next) => {
   try {
     const order = await Order.findByIdAndUpdate(req.params.id, req.body, {
       new: true
@@ -45,7 +44,7 @@ exports.updateOrder = async (req, res, next) => {
   }
 };
 
-exports.addOrder = async (req, res, next) => {
+exports.addGroup = async (req, res, next) => {
   try {
     const order = new Order(req.body);
     await order.save();
