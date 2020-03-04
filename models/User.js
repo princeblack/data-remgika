@@ -30,20 +30,11 @@ const UserSchema = new Schema(
       required: true
     },
     birthday: {
-      type: Date
-    },
-    userName: {
-      type: String,
-      required: true,
-      unique: true
+      type: String
     },
     role: {
       type: String,
       enum: ['Admin', 'User'],
-      required: true
-    },
-    address: {
-      type: Address,
       required: true
     },
     LastUpdate:{
