@@ -1,5 +1,6 @@
 const Playground = require('../models/Playground');
 const createError = require('http-errors');
+const fs = require('fs');
 
 exports.getAllPlaygrounds = async (req, res, next) => {
   try {
@@ -44,7 +45,12 @@ exports.updatePlayground = async (req, res, next) => {
 
 exports.addPlayground = async (req, res, next) => {
   try {
-    const playground = new Playground(req.body);
+    const playgroundObject = JSON.parse(req.body)
+    const playground = new Playground({
+      ...playgroundObject,
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+      userId: user._id
+    });
     await playground.save();
     res.status(200).send(playground);
   } catch (e) {

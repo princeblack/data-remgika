@@ -20,8 +20,9 @@ const EventSchema = new Schema({
       type: Date,
       required: true
   },
-  Coorganizers:{
-      type: String
+  userId:{
+      type: String,
+      required: true
   }
 });
 

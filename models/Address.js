@@ -7,6 +7,7 @@ const AddressSchema = new Schema(
       type: String,
       required: true
     },
+    code:{type: Number, required: true },
     city: { type: String, required: true }
   },
   { _id: false }

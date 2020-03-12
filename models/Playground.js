@@ -4,6 +4,7 @@ const Address = require('./Address');
 
 const PlaygroundSchema = new Schema({
   imageUrl: { type: String, required: true },
+  userId: { type: String, required: true },
   title: {
     type: String,
     required: true

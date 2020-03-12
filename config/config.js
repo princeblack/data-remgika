@@ -8,7 +8,7 @@ const config = {
 const devConfig = {
   db: 'mongodb://localhost:27017/data-remgika',
   jwt_key: 'remgika'
-};
+};  
 
 const prodConfig = {
   db:

@@ -29,9 +29,6 @@ const UserSchema = new Schema(
       type: String,
       required: true
     },
-    birthday: {
-      type: String
-    },
     role: {
       type: String,
       enum: ['Admin', 'User'],
@@ -41,15 +38,15 @@ const UserSchema = new Schema(
       type: Date,
       default: Date.now
     }
+  },
+  {
+    toJSON: {
+      virtuals: true
+    },
+    toObject: {
+      virtuals: true
+    }
   }
-  // {
-  //   toJSON: {
-  //     virtuals: true
-  //   },
-  //   toObject: {
-  //     virtuals: true
-  //   }
-  // }
 );
 
 
@@ -77,9 +74,6 @@ UserSchema.methods.getPublicFields = function() {
     lastName: this.lastName,
     firstName: this.firstName,
     email: this.email,
-    fullName: this.fullName,
-    birthday: new Date(this.birthday),
-    address: this.address,
     LastUpdate: this.LastUpdate
   };
 };
