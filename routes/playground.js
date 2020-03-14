@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('../images/multer-config')
 const {
   getAllPlaygrounds,
   getOnePlayground,
@@ -13,7 +14,7 @@ const isAdmin = require('../middleware/rolesAuthenticator');
 router
   .route('/')
   .get( getAllPlaygrounds)
-  .post( addPlayground);
+  .post(auth,multer, addPlayground);
 
 router
   .route('/:id')

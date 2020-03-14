@@ -57,13 +57,7 @@ const Order = require('../models/Order');
         lastName: faker.name.lastName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
-        birthday: faker.date.past(),
-        userName: faker.internet.userName(),
-        role: faker.random.arrayElement(['Admin', 'User']),
-        address: {
-          city: faker.address.city(),
-          street: faker.address.streetName()
-        }
+        role: faker.random.arrayElement(['Admin', 'User'])
       });
 
       const token = user.generateAuthToken();
@@ -84,12 +78,11 @@ const Order = require('../models/Order');
     .fill(null)
     .map(() => {
       const playground = new Playground({
-        imageUrl:faker.image.imageUrl(),
+        // imageUrl:faker.image.imageUrl(),
         title: faker.random.words(),
-        address: {
-          city: faker.address.city(),
-          street: faker.address.streetName()
-        },
+        city: faker.address.city(),
+        postalCode : faker.address.zipCode(),
+        street: faker.address.streetName(),
         description: faker.lorem.paragraphs()
       });
 

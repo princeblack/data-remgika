@@ -45,11 +45,9 @@ exports.updatePlayground = async (req, res, next) => {
 
 exports.addPlayground = async (req, res, next) => {
   try {
-    const playgroundObject = JSON.parse(req.body)
     const playground = new Playground({
-      ...playgroundObject,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-      userId: user._id
+      ...req.body
+      // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     });
     await playground.save();
     res.status(200).send(playground);

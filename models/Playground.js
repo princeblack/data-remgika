@@ -3,14 +3,22 @@ const { Schema } = mongoose;
 const Address = require('./Address');
 
 const PlaygroundSchema = new Schema({
-  imageUrl: { type: String, required: true },
-  userId: { type: String, required: true },
+  // imageUrl: { type: String, required: true },
+  // userId: { type: String, required: true },
   title: {
     type: String,
     required: true
   },
-  address: {
-    type: Address,
+  street:{
+    type: String,
+    required: true
+  },
+  postalCode:{
+    type: String,
+    required: true
+  },
+  city:{
+    type: String,
     required: true
   },
   description: {
