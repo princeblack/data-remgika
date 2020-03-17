@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('../images/multer-config')
 const {
   getAllPlaygrounds,
+  getMyPlaygroungs,
   getOnePlayground,
   deletePlayground,
   updatePlayground,
@@ -21,5 +22,7 @@ router
   .get(getOnePlayground)
   .delete(auth, isAdmin, deletePlayground)
   .put(auth, isAdmin, updatePlayground);
-
+router
+  .route('/my')
+  .get(getMyPlaygroungs);
 module.exports = router;

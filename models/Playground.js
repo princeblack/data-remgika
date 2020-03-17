@@ -1,28 +1,31 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const Address = require('./Address');
 
 const PlaygroundSchema = new Schema({
+  userID: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
   },
-  street:{
+  street: {
     type: String,
     required: true
   },
-  postalCode:{
+  postalCode: {
     type: String,
     required: true
   },
-  city:{
+  city: {
     type: String,
     required: true
   },
   description: {
     type: String,
     required: true
-  },
+  }
 });
 
 module.exports = mongoose.model('Playground', PlaygroundSchema);
