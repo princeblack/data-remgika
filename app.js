@@ -12,7 +12,6 @@ const playgroundRouter = require('./routes/playground');
 const groupRouter = require('./routes/group');
 const eventRouter = require('./routes/event');
 
-
 /** OUR MIDDLEWARE */
 // const { setCors } = require('./middleware/security');
 const env = require('./config/config');
@@ -32,10 +31,7 @@ mongoose.connect(env.db, {
   useFindAndModify: false
 });
 
-mongoose.connection.on(
-  'error',
-  console.error.bind(console, 'connection error:')
-);
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
 mongoose.connection.on('open', () => {
   console.log(`Connected to the database...`);

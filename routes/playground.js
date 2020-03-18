@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('../images/multer-config')
+const multer = require('../images/multer-config');
 const {
   getAllPlaygrounds,
-  getMyPlaygroungs,
+  getMyPlaygrounds,
   getOnePlayground,
   deletePlayground,
   updatePlayground,
@@ -14,16 +14,15 @@ const isAdmin = require('../middleware/rolesAuthenticator');
 
 router
   .route('/')
-  .get( getAllPlaygrounds)
-  .post(auth,multer, addPlayground);
+  .get(getAllPlaygrounds)
+  .post(auth, multer, addPlayground);
+
+router.route('/my').get(auth, getMyPlaygrounds);
 
 router
   .route('/:id')
   .get(getOnePlayground)
   .delete(auth, isAdmin, deletePlayground)
   .put(auth, isAdmin, updatePlayground);
-router
-  .route('/my')
-  .get(auth,getMyPlaygroungs);
 
 module.exports = router;
