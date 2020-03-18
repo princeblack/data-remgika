@@ -24,5 +24,6 @@ router
   .put(auth, isAdmin, updatePlayground);
 router
   .route('/my')
-  .get(getMyPlaygroungs);
+  .get(auth,getMyPlaygroungs);
+
 module.exports = router;
