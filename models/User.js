@@ -1,17 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const Address = require('./Address');
-const jwt = require('jsonwebtoken');
-const encryption = require('../lib/encryption');
-const env = require('../config/config');
+const Address = require("./Address");
+const jwt = require("jsonwebtoken");
+const encryption = require("../lib/encryption");
+const env = require("../config/config");
 
 const UserSchema = new Schema(
   {
-    id: false,
-    created: {
-      type: Date,
-      default: new Date
-    },
     firstName: {
       type: String,
       required: true
@@ -31,29 +26,18 @@ const UserSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ['Admin', 'User'],
+      enum: ["Admin", "User"],
       required: true
-    },
-    LastUpdate:{
-      type: Date,
-      default: Date.now
     }
   },
   {
-    toJSON: {
-      virtuals: true
-    },
-    toObject: {
-      virtuals: true
-    }
+    timestamps: true
   }
 );
 
-
-
 UserSchema.methods.generateAuthToken = function() {
   const user = this;
-  const access = 'x-auth';
+  const access = "x-auth";
 
   const token = jwt
     .sign({ _id: user._id.toHexString(), access }, env.jwt_key)
@@ -70,11 +54,9 @@ UserSchema.methods.checkPassword = async function(password) {
 UserSchema.methods.getPublicFields = function() {
   return {
     _id: this._id,
-    created: new Date(this.created),
     lastName: this.lastName,
     firstName: this.firstName,
-    email: this.email,
-    LastUpdate: this.LastUpdate
+    email: this.email
   };
 };
 
@@ -93,12 +75,12 @@ UserSchema.statics.findByToken = function(token) {
   });
 };
 
-UserSchema.pre('save', async function(next) {
+UserSchema.pre("save", async function(next) {
   // only hash the password if it has been modified (or is new)
-  if (!this.isModified('password')) return next();
+  if (!this.isModified("password")) return next();
 
   this.password = await encryption.encrypt(this.password);
   next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);
