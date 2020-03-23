@@ -56,8 +56,8 @@ exports.addPlayground = async (req, res, next) => {
   try {
     const playground = new Playground({
       ...req.body,
-      userID: req.user._id
-      // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+      userID: req.user._id,
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     });
     await playground.save();
     res.status(200).send(playground);

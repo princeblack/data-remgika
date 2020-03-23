@@ -6,6 +6,10 @@ const PlaygroundSchema = new Schema({
     type: String,
     required: true
   },
+  imageUrl:{
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true

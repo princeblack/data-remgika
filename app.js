@@ -50,7 +50,6 @@ app.use(
 );
 
 /** STATIC FILES */
-// app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 /** ROUTES */
