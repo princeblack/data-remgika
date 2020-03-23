@@ -4,8 +4,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
-const helmet = require("helmet");
-var morgan = require("morgan");
+const helmet = require('helmet');
+var morgan = require('morgan');
 
 /** ROUTERS */
 const indexRouter = require('./routes/index');
@@ -22,7 +22,7 @@ const cors = require('cors');
 /** INIT THE SERVER */
 const app = express();
 app.use(helmet());
-app.use(morgan("common"));
+app.use(morgan('common'));
 
 /** LOGS */
 app.use(logger('dev'));
@@ -54,7 +54,8 @@ app.use(
 );
 
 /** STATIC FILES */
-app.use('/images', express.static(path.join(__dirname, 'images')));
+// app.use('/playgrounds', express.static(path.join(__dirname, 'playgrounds')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 /** ROUTES */
 app.use('/', indexRouter);
