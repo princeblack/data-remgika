@@ -1,5 +1,5 @@
 const multer = require('multer');
-const DIR = './public/playgrounds/';
+const DIR = "./public/images/";
 const path = require('path');
 const uuidv4 = require('uuid/v4');
 

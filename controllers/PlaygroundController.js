@@ -57,10 +57,9 @@ exports.addPlayground = async (req, res, next) => {
     const reqFiles = [];
     const url = req.protocol + '://' + req.get('host');
     for (var i = 0; i < req.files.length; i++) {
-      reqFiles.push(url + '/static/playgrounds/' + req.files[i].filename);
+      reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
     const playground = new Playground({
-      ...req.body,
       userID: req.user._id,
       imgCollection: reqFiles
     });
