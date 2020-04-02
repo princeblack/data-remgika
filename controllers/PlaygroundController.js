@@ -60,12 +60,13 @@ exports.addPlayground = async (req, res, next) => {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
     const playground = new Playground({
+      ...req.body,
       userID: req.user._id,
       imgCollection: reqFiles
     });
     await playground.save();
     res.status(200).send(playground);
   } catch (error) {
-    next(e);
+    next(error);
   }
 };
