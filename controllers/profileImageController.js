@@ -14,7 +14,7 @@ exports.getAllProfileImage = async (req, res, next) => {
 exports.getMyProfileImage = async (req, res, next) => {
   try {
     const profileImages = await ProfileImage.find({
-      userID: req.user._id
+      userID: req.user._id,
     }).select("-__v");
     res.status(200).send(profileImages);
   } catch (e) {
@@ -34,15 +34,15 @@ exports.getOneProfileImage = async (req, res, next) => {
   }
 };
 
-exports.deleteProfileImage = async (req, res, next) => {
-  try {
-    const profileImages = await ProfileImage.findByIdAndDelete(req.params.id);
-    if (!profileImages) throw new createError.NotFound();
-    res.status(200).send(profileImages);
-  } catch (e) {
-    next(e);
-  }
-};
+// exports.deleteProfileImage = async (req, res, next) => {
+//   try {
+//     const profileImages = await ProfileImage.findByIdAndDelete(req.params.id);
+//     if (!profileImages) throw new createError.NotFound();
+//     res.status(200).send(profileImages);
+//   } catch (e) {
+//     next(e);
+//   }
+// };
 
 exports.updateProfileImage = async (req, res, next) => {
   try {
@@ -50,7 +50,7 @@ exports.updateProfileImage = async (req, res, next) => {
       req.params.id,
       req.body,
       {
-        new: true
+        new: true,
       }
     ).select("-__v");
     if (!profileImages) throw new createError.NotFound();
@@ -69,11 +69,33 @@ exports.addProfileImage = async (req, res, next) => {
     }
     const profileImages = new ProfileImage({
       userID: req.user._id,
-      imgCollection: reqFiles
+      imgCollection: reqFiles,
     });
     await profileImages.save();
     res.status(200).send(profileImages);
   } catch (error) {
-    next(e);
+    next(error);
   }
+};
+exports.deleteProfileImage = async (req, res, next) => {
+  ProfileImage.findOne({ _id: req.params.id })
+    .then((profileImages) => {
+      const filename = profileImages.imgCollection;
+      fs.unlink(`public/images/${filename.join().slice(36)}`, async () => {
+        const profileImages = await ProfileImage.findByIdAndDelete(
+          req.params.id
+        )
+          .then(() =>
+            res.status(200).json({
+              message: "Object supprimé",
+            })
+          )
+          .catch((error) =>
+            res.status(400).json({
+              error,
+            })
+          );
+      });
+    })
+    .catch((error) => res.status(500).json({ error }));
 };
