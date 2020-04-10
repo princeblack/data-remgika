@@ -49,8 +49,12 @@ app.use(cookieParser());
 // server.use(cors());
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
-    credentials: true
+    origin: [
+      "http://localhost:3000",
+      "http://remgika.com",
+      "https://mahamadicongo.com",
+    ],
+    credentials: true,
   })
 );
 
