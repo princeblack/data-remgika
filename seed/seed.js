@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const faker = require('faker');
 const User = require('../models/User');
 const Playground = require('../models/Playground');
-const Order = require('../models/Order');
 
 (async function() {
   /** CONNECT TO MONGO */
@@ -39,13 +38,7 @@ const Order = require('../models/Order');
     console.log(e);
   }
 
-  /** DELETE ALL ORDERS */
-  try {
-    await Order.deleteMany({});
-    console.log('Old orders moved to a better place. Spandau');
-  } catch (e) {
-    console.log(e);
-  }
+
   console.log(`I am creating 20 fake users`);
 
   /** CREATE 20 FAKE USERS */
@@ -78,12 +71,13 @@ const Order = require('../models/Order');
     .fill(null)
     .map(() => {
       const playground = new Playground({
-        // imageUrl:faker.image.imageUrl(),
+        imgCollection: faker.image.imageUrl(),
+        userID: user._id,
         title: faker.random.words(),
         city: faker.address.city(),
-        postalCode : faker.address.zipCode(),
+        postalCode: faker.address.zipCode(),
         street: faker.address.streetName(),
-        description: faker.lorem.paragraphs()
+        description: faker.lorem.paragraphs(),
       });
 
       return playground.save();

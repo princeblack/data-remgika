@@ -33,19 +33,38 @@ exports.getOnePlayground = async (req, res, next) => {
 };
 
 exports.updatePlayground = async (req, res, next) => {
-  try {
-    const playground = await Playground.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
+  const reqFiles = [];
+  if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      for (var i = 0; i < req.files.length; i++) {
+        reqFiles.push(url + "/static/images/" + req.files[i].filename);
       }
-    ).select("-__v");
-    if (!playground) throw new createError.NotFound();
-    res.status(200).send(playground);
-  } catch (e) {
-    next(e);
   }
+  const playground = req.file
+    ? {
+        ...JSON.parse(req.body.playground),
+        imgCollection: reqFiles,
+      }
+    : { ...req.body };
+  Playground.findByIdAndUpdate(
+    {
+      _id: req.params.id,
+    },
+    {
+      ...playground,
+      _id: req.params.id,
+    }
+  )
+    .then(() =>
+      res.status(200).json({
+        message: "Object modifié !",
+      })
+    )
+    .catch((error) =>
+      res.status(400).json({
+        error,
+      })
+    );
 };
 
 exports.addPlayground = async (req, res, next) => {
@@ -68,21 +87,25 @@ exports.addPlayground = async (req, res, next) => {
 };
 exports.deletePlayground = async (req, res, next) => {
   Playground.findOne({ _id: req.params.id })
-    .then((playground) => {
-      const filename = playground.imgCollection;
-      fs.unlink(`public/images/${filename.join().slice(36)}`, async () => {
-        const playground = await Playground.findByIdAndDelete(req.params.id)
-          .then(() =>
-            res.status(200).json({
-              message: "Object supprimé",
-            })
-          )
-          .catch((error) =>
-            res.status(400).json({
-              error,
-            })
-          );
-      });
+    .then((playgroundImage) => {
+      const filename = playgroundImage.imgCollection;
+      for (var i = 0; i <= filename.length; i++) {
+        // deleting the files works perfectly
+        const file = filename[i].slice(36);
+        fs.unlink(`public/images/${file}`, async () => {
+          const playground = await Playground.findByIdAndDelete(req.params.id)
+            .then(() =>
+              res.status(200).json({
+                message: "Object supprimé",
+              })
+            )
+            .catch((error) =>
+              res.status(400).json({
+                error,
+              })
+            );
+        });
+      }
     })
     .catch((error) => res.status(500).json({ error }));
 };
