@@ -3,27 +3,34 @@ const { Schema } = mongoose;
 const Address = require('./Address');
 
 const EventSchema = new Schema({
-  imageUrl: { type: String, required: true },
+  imgCollection: {
+    type: Array,
+    required: true,
+  },
   eventName: {
     type: String,
-    required: true
+    required: true,
   },
   address: {
-    type: Address,
-    required: true
+    type: String,
+    required: true,
+  },
+  start: {
+    type: String,
+    required: true,
+  },
+  end: {
+    type: String,
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
-  date:{
-      type: Date,
-      required: true
+  userId: {
+    type: String,
+    required: true,
   },
-  userId:{
-      type: String,
-      required: true
-  }
 });
 
 module.exports = mongoose.model('Event', EventSchema);
