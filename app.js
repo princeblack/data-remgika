@@ -13,6 +13,7 @@ const usersRouter = require('./routes/users');
 const playgroundRouter = require('./routes/playground');
 const groupRouter = require('./routes/group');
 const eventRouter = require('./routes/event');
+const profileImage = require("./routes/profileImage")
 
 /** OUR MIDDLEWARE */
 // const { setCors } = require('./middleware/security');
@@ -21,8 +22,8 @@ const cors = require('cors');
 
 /** INIT THE SERVER */
 const app = express();
-app.use(helmet());
-app.use(morgan('common'));
+// app.use(helmet());
+// app.use(morgan('common'));
 
 /** LOGS */
 app.use(logger('dev'));
@@ -48,8 +49,12 @@ app.use(cookieParser());
 // server.use(cors());
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
-    credentials: true
+    origin: [
+      "http://localhost:3000",
+      "http://remgika.com",
+      "https://mahamadicongo.com",
+    ],
+    credentials: true,
   })
 );
 
@@ -63,6 +68,7 @@ app.use('/users', usersRouter);
 app.use('/playground', playgroundRouter);
 app.use('/group', groupRouter);
 app.use('/events', eventRouter);
+app.use('/images', profileImage);
 
 /** ERROR HANDLING */
 app.use(function(req, res, next) {

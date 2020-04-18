@@ -30,26 +30,39 @@ exports.getOnePlayground = async (req, res, next) => {
   }
 };
 
-exports.deletePlayground = async (req, res, next) => {
-  try {
-    const playground = await Playground.findByIdAndDelete(req.params.id);
-    if (!playground) throw new createError.NotFound();
-    res.status(200).send(playground);
-  } catch (e) {
-    next(e);
-  }
-};
-
 exports.updatePlayground = async (req, res, next) => {
-  try {
-    const playground = await Playground.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    }).select('-__v');
-    if (!playground) throw new createError.NotFound();
-    res.status(200).send(playground);
-  } catch (e) {
-    next(e);
+  const reqFiles = [];
+  if (req.file) {
+    const url = req.protocol + '://' + req.get('host');
+    for (var i = 0; i < req.files.length; i++) {
+      reqFiles.push(url + '/static/images/' + req.files[i].filename);
+    }
   }
+  const playground = req.file
+    ? {
+        ...JSON.parse(req.body.playground),
+        imgCollection: reqFiles,
+      }
+    : { ...req.body };
+  Playground.findByIdAndUpdate(
+    {
+      _id: req.params.id,
+    },
+    {
+      ...playground,
+      _id: req.params.id,
+    }
+  )
+    .then(() =>
+      res.status(200).json({
+        message: 'Object modifié !',
+      })
+    )
+    .catch((error) =>
+      res.status(400).json({
+        error,
+      })
+    );
 };
 
 exports.addPlayground = async (req, res, next) => {
@@ -57,9 +70,8 @@ exports.addPlayground = async (req, res, next) => {
     const reqFiles = [];
     const url = req.protocol + '://' + req.get('host');
     for (var i = 0; i < req.files.length; i++) {
-      reqFiles.push(url + '/static/playgrounds/' + req.files[i].filename);
+      reqFiles.push(url + '/static/images/' + req.files[i].filename);
     }
-
     const playground = new Playground({
       ...req.body,
       userID: req.user._id,
@@ -67,7 +79,31 @@ exports.addPlayground = async (req, res, next) => {
     });
     await playground.save();
     res.status(200).send(playground);
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    next(error);
   }
+};
+exports.deletePlayground = async (req, res, next) => {
+  Playground.findOne({ _id: req.params.id })
+    .then((playgroundImage) => {
+      const filename = playgroundImage.imgCollection;
+      for (var i = 0; i <= filename.length; i++) {
+        // deleting the files works perfectly
+        const file = filename[i].slice(36);
+        fs.unlink(`public/images/${file}`, async () => {
+          const playground = await Playground.findByIdAndDelete(req.params.id)
+            .then(() =>
+              res.status(200).json({
+                message: 'Object supprimé',
+              })
+            )
+            .catch((error) =>
+              res.status(400).json({
+                error,
+              })
+            );
+        });
+      }
+    })
+    .catch((error) => res.status(500).json({ error }));
 };

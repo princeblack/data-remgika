@@ -44,10 +44,19 @@ exports.updateEvent = async (req, res, next) => {
 
 exports.addEvent = async (req, res, next) => {
   try {
-    const event = new Event(req.body);
+    const reqFiles = [];
+    const url = req.protocol + "://" + req.get("host");
+    for (var i = 0; i < req.files.length; i++) {
+      reqFiles.push(url + "/static/images/" + req.files[i].filename);
+    }
+    const event = new Event({
+      ...req.body,
+      userId: req.user._id,
+      imgCollection: reqFiles,
+    });
     await event.save();
     res.status(200).send(event);
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    next(error);
   }
 };

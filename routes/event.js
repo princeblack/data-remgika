@@ -9,11 +9,12 @@ const {
 } = require('../controllers/eventController');
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
+const upload = require("../middleware/multer-config");
 
 router
-  .route('/')
-  .get( getAllEvent)
-  .post( addEvent);
+  .route("/")
+  .get(getAllEvent)
+  .post(auth, upload.array("imgCollection", 3), addEvent);
 
 router
   .route('/:id')

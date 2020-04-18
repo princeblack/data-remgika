@@ -19,14 +19,6 @@ const PlaygroundSchema = new Schema(
       type: String,
       required: true
     },
-    postalCode: {
-      type: String,
-      required: true
-    },
-    city: {
-      type: String,
-      required: true
-    },
     description: {
       type: String,
       required: true

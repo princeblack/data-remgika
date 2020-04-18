@@ -23,6 +23,6 @@ router
   .route('/:id')
   .get(getOnePlayground)
   .delete(auth, isAdmin, deletePlayground)
-  .put(auth, isAdmin, updatePlayground);
+  .put(auth, isAdmin,upload.array('imgCollection', 3), updatePlayground);
 
 module.exports = router;
