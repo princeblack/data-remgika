@@ -43,7 +43,7 @@ exports.deletePlayground = async (req, res, next) => {
 exports.updatePlayground = async (req, res, next) => {
   try {
     const playground = await Playground.findByIdAndUpdate(req.params.id, req.body, {
-      new: true
+      new: true,
     }).select('-__v');
     if (!playground) throw new createError.NotFound();
     res.status(200).send(playground);
@@ -59,14 +59,15 @@ exports.addPlayground = async (req, res, next) => {
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + '/static/playgrounds/' + req.files[i].filename);
     }
+
     const playground = new Playground({
       ...req.body,
       userID: req.user._id,
-      imgCollection: reqFiles
+      imgCollection: reqFiles,
     });
     await playground.save();
     res.status(200).send(playground);
-  } catch (error) {
+  } catch (e) {
     next(e);
   }
 };
