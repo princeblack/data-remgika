@@ -5,13 +5,9 @@ const GroupSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: "User",
     },
-    created: {
-      type: Date,
-      default: new Date
-    },
-    groupName:{
+    groupName: {
       type: String,
       unique: true,
       required: true,
@@ -20,15 +16,18 @@ const GroupSchema = new Schema(
       {
         adminUsers: {
           type: Schema.Types.ObjectId,
-          ref: 'User'
-        }
-      }
+          ref: "User",
+        },
+      },
     ],
-    confidentiality:{
+    confidentiality: {
       type: String,
-      enum: ['Private', 'Public'],
-      required: true
-    }
+      enum: ["Private", "Public"],
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
   }
 );
 

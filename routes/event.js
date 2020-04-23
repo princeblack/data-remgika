@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const {
-    getAllEvent,
-    getOneEvent,
-    deleteEvent,
-    updateEvent,
-    addEvent
-} = require('../controllers/eventController');
+  getAllEvent,
+  getOneEvent,
+  deleteEvent,
+  updateEvent,
+  addEvent,
+  getMyEvents,
+} = require("../controllers/eventController");
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
 const upload = require("../middleware/multer-config");
@@ -16,10 +17,12 @@ router
   .get(getAllEvent)
   .post(auth, upload.array("imgCollection", 3), addEvent);
 
+router.route("/my").get(auth, getMyEvents);
+
 router
-  .route('/:id')
+  .route("/:id")
   .get(getOneEvent)
   .delete(auth, isAdmin, deleteEvent)
-  .put(auth, isAdmin, updateEvent);
+  .put(auth, isAdmin, upload.array("imgCollection", 3), updateEvent);
 
 module.exports = router;
