@@ -60,7 +60,7 @@ exports.addUser = async (req, res, next) => {
       .status(200)
       .cookie("token", token, {
         expires: new Date(Date.now() + 604800000),
-        secure: false, // if we are not using https
+        secure: true, // if we are not using https
         httpOnly: true
       })
       .send({ message: " The User is add successfully ", data });
@@ -82,7 +82,7 @@ exports.loginUser = async (req, res, next) => {
       .status(200)
       .cookie('token', token, {
         expires: new Date(Date.now() + 604800000),
-        secure: false, // if we are not using https
+        secure: true, // if we are not using https
         httpOnly: true
       })
       .send(data);
