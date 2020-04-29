@@ -35,7 +35,7 @@ exports.getOnePlayground = async (req, res, next) => {
 exports.updatePlayground = async (req, res, next) => {
   const reqFiles = [];
   if (req.file) {
-    const url = req.protocol + "://" + req.get("host");
+    const url = req.secure + "://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
@@ -70,7 +70,7 @@ exports.updatePlayground = async (req, res, next) => {
 exports.addPlayground = async (req, res, next) => {
   try {
     const reqFiles = [];
-    const url = req.protocol + "://" + req.get("host");
+    const url = req.secure + "://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
