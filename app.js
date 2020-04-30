@@ -49,11 +49,7 @@ app.use(cookieParser());
 // server.use(cors());
 app.use(
   cors({
-    origin: [
-      "https://remgika.com",
-      "http://remgika.com",
-      "http://localhost:3000",
-    ],
+    origin: "https://remgika.com",
     credentials: true,
   })
 );
