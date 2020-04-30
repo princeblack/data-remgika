@@ -58,9 +58,7 @@ exports.updateEvent = async (req, res, next) => {
      for (var i = 0; i < req.files.length; i++) {
        reqFiles.push(url + "/static/images/" + req.files[i].filename);
      }
-   }
-   console.log(req.body);
-   
+   }   
    const event = req.file
      ? {
          ...JSON.parse(req.body.event),

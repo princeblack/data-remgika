@@ -22,8 +22,8 @@ const cors = require('cors');
 
 /** INIT THE SERVER */
 const app = express();
-// app.use(helmet());
-// app.use(morgan('common'));
+app.use(helmet());
+app.use(morgan('common'));
 
 /** LOGS */
 app.use(logger('dev'));
@@ -53,7 +53,6 @@ app.use(
       "https://remgika.com",
       "http://remgika.com",
       "http://localhost:3000",
-      "https://localhost:3000",
     ],
     credentials: true,
   })
