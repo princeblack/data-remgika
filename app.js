@@ -16,7 +16,7 @@ const eventRouter = require('./routes/event');
 const profileImage = require("./routes/profileImage")
 
 /** OUR MIDDLEWARE */
-const { setCors } = require('./middleware/security');
+const { Cors } = require('./middleware/security');
 const env = require('./config/config');
 const cors = require('cors');
 
@@ -46,25 +46,25 @@ mongoose.connection.on('open', () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://remgika.com");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "https://remgika.com");
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+//   );
+//   next();
+// });
 // app.use(setCors());
-// app.use(
-//   cors({
-//     origin: "https://remgika.com",
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: "https://remgika.com",
+    credentials: true,
+  })
+);
 
 /** STATIC FILES */
 // app.use('/playgrounds', express.static(path.join(__dirname, 'playgrounds')));
