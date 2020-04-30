@@ -5,7 +5,7 @@
   "scripts": {
     "start": "DEBUG=data-remgika:* nodemon --inspect ./bin/www",
     "remote": "NODE_ENV=production DEBUG=data-remgika-:* nodemon --inspect ./bin/www",
-    "build": "node build --output public" 
+    "build": "node build --output public"
   },
   "dependencies": {
     "bcrypt": "^3.0.7",

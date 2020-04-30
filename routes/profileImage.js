@@ -17,7 +17,7 @@ router
   .get(getAllProfileImage)
   .post(auth, upload.array("imgCollection", 3), addProfileImage);
 
-router.route("/my").get(auth, getMyProfileImage);
+router.route("/profileImage").get(auth, getMyProfileImage);
 
 router
   .route("/:id")

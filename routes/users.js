@@ -23,7 +23,7 @@ router
   .get(auth,isAdmin, getAllUsers)
   .post(userValidationRules(), userValidationErrorHandling, addUser);
 
-router.route('/me').get(auth, authenticateUser);
+router.route('/auth').get(auth, authenticateUser);
 router.route('/login').post(loginUser);
 router.route('/logout').post(auth, logoutUser);
 

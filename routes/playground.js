@@ -17,7 +17,7 @@ router
   .get(getAllPlaygrounds)
   .post(auth, upload.array('imgCollection', 3), addPlayground);
 
-router.route('/my').get(auth, getMyPlaygrounds);
+router.route('/userPlay').get(auth, getMyPlaygrounds);
 
 router
   .route('/:id')

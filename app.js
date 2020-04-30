@@ -51,8 +51,9 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
+      "https://localhost:3000",
       "https://remgika.com",
-      "https://mahamadicongo.com",
+      "http://remgika.com",
     ],
     credentials: true,
   })

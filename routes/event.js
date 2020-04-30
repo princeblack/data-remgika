@@ -17,7 +17,7 @@ router
   .get(getAllEvent)
   .post(auth, upload.array("imgCollection", 3), addEvent);
 
-router.route("/my").get(auth, getMyEvents);
+router.route("/userEvent").get(auth, getMyEvents);
 
 router
   .route("/:id")

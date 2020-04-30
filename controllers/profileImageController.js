@@ -34,16 +34,6 @@ exports.getOneProfileImage = async (req, res, next) => {
   }
 };
 
-// exports.deleteProfileImage = async (req, res, next) => {
-//   try {
-//     const profileImages = await ProfileImage.findByIdAndDelete(req.params.id);
-//     if (!profileImages) throw new createError.NotFound();
-//     res.status(200).send(profileImages);
-//   } catch (e) {
-//     next(e);
-//   }
-// };
-
 exports.updateProfileImage = async (req, res, next) => {
   try {
     const profileImages = await ProfileImage.findByIdAndUpdate(
@@ -63,7 +53,7 @@ exports.updateProfileImage = async (req, res, next) => {
 exports.addProfileImage = async (req, res, next) => {
   try {
     const reqFiles = [];
-    const url = req.secure + "://" + req.get("host");
+    const url = req.protocol + "://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
