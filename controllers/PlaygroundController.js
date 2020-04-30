@@ -69,15 +69,15 @@ exports.updatePlayground = async (req, res, next) => {
 
 exports.addPlayground = async (req, res, next) => {
   try {
-    const reqFiles = [];
-    const url = req.protocol + "://" + req.get("host");
-    for (var i = 0; i < req.files.length; i++) {
-      reqFiles.push(url + "/static/images/" + req.files[i].filename);
-    }
+    // const reqFiles = [];
+    // const url = req.protocol + "://" + req.get("host");
+    // for (var i = 0; i < req.files.length; i++) {
+    //   reqFiles.push(url + "/static/images/" + req.files[i].filename);
+    // }
     const playground = new Playground({
       ...req.body,
       userID: req.user._id,
-      imgCollection: reqFiles,
+      imgCollection: req.files,
     });
     await playground.save();
     res.status(200).send(playground);
