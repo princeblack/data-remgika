@@ -49,7 +49,7 @@ mongoose.connection.on("open", () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(setCors);
+// app.use(setCors);
 app.use(
   cors({
     origin: "https://remgika.com",
