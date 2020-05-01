@@ -17,6 +17,8 @@ var credentials = { key: privateKey, cert: certificate };
 // process.env.PORT
 var port = normalizePort(process.env.PORT || "8000");
 const host = process.env.HOST || "localhost";
+const test = process.env.TZ
+
 
 app.set('port', port);
 
@@ -91,5 +93,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     :  addr.port;
-  debug(`App running at https://${host}:${bind}`);
+  debug(`App running at https://${host}:${bind} avec ${test}`);
 }
