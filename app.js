@@ -24,7 +24,11 @@ const cors = require("cors");
 const app = express();
 app.use(helmet());
 app.use(morgan("common"));
-
+app.set("trust proxy", function (ip) {
+  if (ip === "127.0.0.1" || ip === "123.123.123.123") return true;
+  // trusted IPs
+  else return false;
+});
 /** LOGS */
 app.use(logger("dev"));
 
