@@ -59,7 +59,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["https://remgika.com","http://remgika.com"],
+    origin: "https://remgika.com",
     credentials: true,
   })
 );
