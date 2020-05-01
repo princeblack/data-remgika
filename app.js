@@ -23,13 +23,8 @@ const cors = require("cors");
 /** INIT THE SERVER */
 const app = express();
 app.enable('trust proxy'); // trust all
-app.use(function (req, res, next) {
-  if (req.header("x-forwarded-proto") !== "https") {
-    res.redirect("https://" + req.header("host") + req.url);
-  } else {
-    next();
-  }
-});
+app.set('trust proxy', true); // same as above
+
 app.use(helmet());
 app.use(morgan("common"));
 /** LOGS */
