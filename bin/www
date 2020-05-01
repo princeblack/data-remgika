@@ -6,7 +6,7 @@
 
 var app = require('../app');
 var debug = require('debug')('data-remgika:server');
-var http = require('http');
+var https = require('https');
 
 /**
  * Get port from environment and store in Express.
@@ -18,10 +18,10 @@ const host = process.env.HOST || "localhost";
 app.set('port', port);
 
 /**
- * Create http server.
+ * Create https server.
  */
 
-var server = http.createServer(app);
+var server = https.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -52,7 +52,7 @@ function normalizePort(val) {
 }
 
 /**
- * Event listener for http server "error" event.
+ * Event listener for https server "error" event.
  */
 
 function onError(error) {
@@ -80,7 +80,7 @@ function onError(error) {
 }
 
 /**
- * Event listener for http server "listening" event.
+ * Event listener for https server "listening" event.
  */
 
 function onListening() {
@@ -88,5 +88,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     :  addr.port;
-  debug(`App running at http://${host}:${bind}`);
+  debug(`App running at https://${host}:${bind}`);
 }
