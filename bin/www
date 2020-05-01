@@ -3,13 +3,10 @@
 /**
  * Module dependencies.
  */
-var fs = require("fs");
+
 var app = require('../app');
 var debug = require('debug')('data-remgika:server');
-var https = require('https');
-var privateKey = fs.readFileSync("sslcert/server.key", "utf8");
-var certificate = fs.readFileSync("sslcert/server.crt", "utf8");
-var credentials = { key: privateKey, cert: certificate };
+var http = require('http');
 
 /**
  * Get port from environment and store in Express.
@@ -17,16 +14,15 @@ var credentials = { key: privateKey, cert: certificate };
 // process.env.PORT
 var port = normalizePort(process.env.PORT || "8000");
 const host = process.env.HOST || "localhost";
-const test = process.env.TZ
-
 
 app.set('port', port);
-
+app.enable('trust proxy'); // trust all
+app.set('trust proxy', true); // same as above
 /**
- * Create https server.
+ * Create HTTP server.
  */
 
-var server = https.createServer(credentials, app);
+var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -57,7 +53,7 @@ function normalizePort(val) {
 }
 
 /**
- * Event listener for https server "error" event.
+ * Event listener for HTTP server "error" event.
  */
 
 function onError(error) {
@@ -85,7 +81,7 @@ function onError(error) {
 }
 
 /**
- * Event listener for https server "listening" event.
+ * Event listener for HTTP server "listening" event.
  */
 
 function onListening() {
@@ -93,5 +89,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     :  addr.port;
-  debug(`App running at https://${host}:${bind} avec ${test}`);
+  debug(`App running at http://${host}:${bind}`);
 }
