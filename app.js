@@ -58,7 +58,6 @@ app.use(
 );
 
 /** STATIC FILES */
-// app.use('/playgrounds', express.static(path.join(__dirname, 'playgrounds')));
 app.use("/static", express.static(path.join(__dirname, "public")));
 
 /** ROUTES */
