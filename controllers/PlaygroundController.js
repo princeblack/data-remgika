@@ -70,8 +70,6 @@ exports.updatePlayground = async (req, res, next) => {
 exports.addPlayground = async (req, res, next) => {
   try {
     const reqFiles = [];
-    console.log(req.protocol, 'here is the protocol');
-    // const secure = "https"
     const url = req.protocol + "://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
