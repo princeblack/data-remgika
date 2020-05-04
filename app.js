@@ -16,19 +16,13 @@ const eventRouter = require("./routes/event");
 const profileImage = require("./routes/profileImage");
 
 /** OUR MIDDLEWARE */
+const { setCors } = require("./middleware/security");
 const env = require("./config/config");
 const cors = require("cors");
 
 /** INIT THE SERVER */
 const app = express();
-// app.enable("trust proxy"); //needed if you're behind a load balancer
-//   app.use(function (req, res, next) {
-//     if (req.header("x-forwarded-proto") !== "https") {
-//       res.redirect("https://" + req.header("host") + req.url);
-//     } else {
-//       next();
-//     }
-//   });
+app.enable("trust proxy"); //needed if you're behind a load balancer
 
 app.use(helmet());
 app.use(morgan("common"));
@@ -56,12 +50,13 @@ mongoose.connection.on("open", () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: "https://remgika.com",
-    credentials: true,
-  })
-);
+app.use(setCors)
+// app.use(
+//   cors({
+//     origin: "https://remgika.com",
+//     credentials: true,
+//   })
+// );
 
 /** STATIC FILES */
 app.use("/static", express.static(path.join(__dirname, "public")));
