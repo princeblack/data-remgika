@@ -16,20 +16,19 @@ const eventRouter = require("./routes/event");
 const profileImage = require("./routes/profileImage");
 
 /** OUR MIDDLEWARE */
-const { setCors } = require("./middleware/security");
 const env = require("./config/config");
 const cors = require("cors");
 
 /** INIT THE SERVER */
 const app = express();
-app.enable("trust proxy"); //needed if you're behind a load balancer
-  app.use(function (req, res, next) {
-    if (req.header("x-forwarded-proto") !== "https") {
-      res.redirect("https://" + req.header("host") + req.url);
-    } else {
-      next();
-    }
-  });
+// app.enable("trust proxy"); //needed if you're behind a load balancer
+//   app.use(function (req, res, next) {
+//     if (req.header("x-forwarded-proto") !== "https") {
+//       res.redirect("https://" + req.header("host") + req.url);
+//     } else {
+//       next();
+//     }
+//   });
 
 app.use(helmet());
 app.use(morgan("common"));
