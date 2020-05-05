@@ -16,7 +16,6 @@ const eventRouter = require("./routes/event");
 const profileImage = require("./routes/profileImage");
 
 /** OUR MIDDLEWARE */
-const { setCors } = require("./middleware/security");
 const env = require("./config/config");
 const cors = require("cors");
 
@@ -54,12 +53,13 @@ app.use(
   cors({
     origin: "https://remgika.com",
     credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+
   })
 );
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'https://remgika.com');
-  next();
-});
+
 /** STATIC FILES */
 app.use("/static", express.static(path.join(__dirname, "public")));
 
