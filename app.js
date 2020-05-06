@@ -49,15 +49,18 @@ mongoose.connection.on("open", () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors());
-// {
-//   origin: "https://remgika.com",
-//   credentials: true,
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-//   preflightContinue: false,
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+app.use(
+  cors({
+    origin: "https://remgika.com",
+    allowedHeaders:'Origin, X-Requested-With, Content, Accept,Content-Type,Authorization',
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204 // some legacy browsers (IE11, various SmartTVs) choke on 204
 
-// }
+  })
+);
+
 /** STATIC FILES */
 app.use("/static", express.static(path.join(__dirname, "public")));
 
