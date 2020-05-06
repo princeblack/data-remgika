@@ -6,7 +6,6 @@ const {
 } = require('../validators/validator');
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
-const cors = require("cors");
 
 const {
   getAllUsers,
@@ -21,8 +20,8 @@ const {
 
 router
   .route('/')
-  .get(cors(),auth,isAdmin, getAllUsers)
-  .post(cors(),userValidationRules(), userValidationErrorHandling, addUser);
+  .get(auth,isAdmin, getAllUsers)
+  .post(userValidationRules(), userValidationErrorHandling, addUser);
 
 router.route('/auth').get(auth, authenticateUser);
 router.route('/login').post(loginUser);
