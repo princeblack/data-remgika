@@ -6,6 +6,7 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 var morgan = require("morgan");
+const cors = require("cors");
 
 /** ROUTERS */
 const indexRouter = require("./routes/index");
@@ -17,7 +18,6 @@ const profileImage = require("./routes/profileImage");
 
 /** OUR MIDDLEWARE */
 const env = require("./config/config");
-const cors = require("cors");
 
 /** INIT THE SERVER */
 const app = express();
@@ -49,16 +49,16 @@ mongoose.connection.on("open", () => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: "https://remgika.com",
-    credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    preflightContinue: false,
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// app.use(
+//   cors({
+//     origin: "https://remgika.com",
+//     credentials: true,
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     preflightContinue: false,
+//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 
-  })
-);
+//   })
+// );
 
 /** STATIC FILES */
 app.use("/static", express.static(path.join(__dirname, "public")));

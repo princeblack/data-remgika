@@ -11,12 +11,11 @@ const {
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
 const upload = require('../middleware/multer-config');
-const cors = require("cors");
 
 router
   .route('/')
   .get(getAllPlaygrounds)
-  .post(cors(),auth, upload.array('imgCollection', 3), addPlayground);
+  .post(auth, upload.array('imgCollection', 3), addPlayground);
 
 router.route('/userPlay').get(auth, getMyPlaygrounds);
 
