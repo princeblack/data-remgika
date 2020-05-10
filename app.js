@@ -51,7 +51,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://remgika.com",
+    origin: "*",
     allowedHeaders:'Origin, X-Requested-With, Content, Accept,Content-Type,Authorization',
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
