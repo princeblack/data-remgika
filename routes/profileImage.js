@@ -15,13 +15,15 @@ const upload = require("../middleware/multer-config");
 router
   .route("/")
   .get(getAllProfileImage)
-  .post(auth, upload.array("imgCollection", 3), addProfileImage);
+  .post(auth, upload.array("imgCollection", 3), addProfileImage)
+  .get(getOneProfileImage)
+
 
 router.route("/profileImage").get(auth, getMyProfileImage);
+router.route("/writer/:id").get(getOneProfileImage);
 
 router
   .route("/:id")
-  .get(getOneProfileImage)
   .delete(auth, isAdmin, deleteProfileImage)
   .put(auth, isAdmin, updateProfileImage);
 

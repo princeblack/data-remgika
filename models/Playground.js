@@ -22,7 +22,14 @@ const PlaygroundSchema = new Schema(
     description: {
       type: String,
       required: true
+    },
+    link:{
+      type: Number,
+    },
+    unlike:{
+      type: Number
     }
+
   },
   {
     timestamps: true

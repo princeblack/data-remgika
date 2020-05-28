@@ -15,6 +15,7 @@ const playgroundRouter = require("./routes/playground");
 const groupRouter = require("./routes/group");
 const eventRouter = require("./routes/event");
 const profileImage = require("./routes/profileImage");
+const comment = require('./routes/comment')
 
 /** OUR MIDDLEWARE */
 const env = require("./config/config");
@@ -51,7 +52,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
     allowedHeaders:'Origin, X-Requested-With, Content, Accept,Content-Type,Authorization',
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -71,6 +72,7 @@ app.use("/playground", playgroundRouter);
 app.use("/group", groupRouter);
 app.use("/events", eventRouter);
 app.use("/images", profileImage);
+app.use("/comment", comment);
 
 /** ERROR HANDLING */
 app.use(function (req, res, next) {

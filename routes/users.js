@@ -27,7 +27,7 @@ router.route('/auth').get(auth, authenticateUser);
 router.route('/login').post(loginUser);
 router.route('/logout').post(auth, logoutUser);
 
-router.route('/:id').get(auth, getOneUser)
+router.route('/:id').get( getOneUser)
 router.route('/:id').delete(auth, deleteUser)
 router.route('/:id').put(auth, updateUser);
 
