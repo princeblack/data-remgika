@@ -20,7 +20,8 @@ const {
 
 router
   .route('/')
-  .get(auth,isAdmin, getAllUsers)
+  // .get(auth,isAdmin, getAllUsers)
+  .get(getAllUsers)
   .post(userValidationRules(), userValidationErrorHandling, addUser);
 
 router.route('/auth').get(auth, authenticateUser);

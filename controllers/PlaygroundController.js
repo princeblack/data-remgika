@@ -4,7 +4,9 @@ const fs = require("fs");
 
 exports.getAllPlaygrounds = async (req, res, next) => {
   try {
-    const playgrounds = await Playground.find().select("-__v");
+    const playgrounds = await Playground.find()
+      .sort("createdAt")
+      .select("-__v");
     res.status(200).send(playgrounds);
   } catch (e) {
     next(e);

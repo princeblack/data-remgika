@@ -17,7 +17,7 @@ exports.addComment = async (req, res, next) => {
 
 exports.getComment= async (req, res, next)=>{
   try {
-    const comment = await Comment.find().select(
+    const comment = await Comment.find().sort("createdAt").select(
       "-__v"
     );    
     res.status(200).send(comment);

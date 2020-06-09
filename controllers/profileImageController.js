@@ -4,7 +4,7 @@ const fs = require("fs");
 
 exports.getAllProfileImage = async (req, res, next) => {
   try {
-    const profileImages = await ProfileImage.find().select("-__v");
+    const profileImages = await ProfileImage.find().select("-__v -updatedAt -createdAt");
     res.status(200).send(profileImages);
   } catch (e) {
     next(e);

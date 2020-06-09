@@ -8,6 +8,12 @@ const commentSchema =  new Schema({
     postId: {
         type:String
     },
+    firstName:{
+        type:String
+    },
+    lastName:{
+        type:String
+    },
     content: {
         type: String
     }

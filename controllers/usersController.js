@@ -5,8 +5,8 @@ exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find()
       .sort("lastName")
-      .select("-password -__v -tokens._id");
-    res.status(200).send({ message: "here you found all Users", users });
+      .select("-password -__v -tokens._id -email -role -updatedAt -createdAt");
+    res.status(200).send(users);
   } catch (e) {
     next(e);
   }
@@ -16,7 +16,7 @@ exports.getOneUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id).select("-password -__v");
     if (!user) throw new createError.NotFound();
-    res.status(200).send({ message: " The User data ", user });
+    res.status(200).send(user );
   } catch (e) {
     next(e);
   }
