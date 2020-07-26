@@ -28,7 +28,11 @@ const UserSchema = new Schema(
       type: String,
       enum: ["Admin", "User"],
       required: true
-    }
+    },
+    group:[{
+      type:Schema.Types.ObjectId,
+      ref: "Group"
+    }]
   },
   {
     timestamps: true
@@ -56,7 +60,8 @@ UserSchema.methods.getPublicFields = function() {
     _id: this._id,
     lastName: this.lastName,
     firstName: this.firstName,
-    email: this.email
+    email: this.email,
+    group: this.group
   };
 };
 

@@ -3,13 +3,16 @@ const { Schema } = mongoose;
 
 const GroupSchema = new Schema(
   {
-    user: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
     groupName: {
       type: String,
-      unique: true,
+      required: true,
+    },
+    description: {
+      type: String,
       required: true,
     },
     admin: [
@@ -25,6 +28,14 @@ const GroupSchema = new Schema(
       enum: ["Private", "Public"],
       required: true,
     },
+    imgCollection: {
+      type: Array,
+      required: true,
+    },
+    members:{
+      type: Number,
+      default: 1
+    }
   },
   {
     timestamps: true,

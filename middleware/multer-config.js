@@ -1,10 +1,14 @@
 const multer = require('multer');
-const DIR = "./public/images/";
+var DIR = "./public/images/";
 const path = require('path');
+const fs = require('fs')
 const { v4: uuidv4 } = require('uuid');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    if (!fs.existsSync(DIR)) {
+      fs.mkdirSync(DIR)
+    }
     cb(null, DIR);
   },
   filename: (req, file, cb) => {

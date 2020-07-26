@@ -1,27 +1,27 @@
-const Event = require('../models/Event');
+const GroupEventSchema = require('../models/GroupsEvents');
 const createError = require('http-errors');
 const fs = require("fs");
 
-exports.getAllEvent = async (req, res, next) => {
+exports.getAllGroupEventSchema = async (req, res, next) => {
   try {
-    const events = await Event.find().select("-__v");
+    const events = await GroupEventSchema.find().select("-__v");
     res.status(200).send(events);
   } catch (e) {
     next(e);
   }
   
 };
-exports.getMyEvents = async (req, res, next) => {
+exports.getMyGroupEventSchemas = async (req, res, next) => {
   try {
-    const events = await Event.find({ userId: req.user._id }).select("-__v");
+    const events = await GroupEventSchema.find({ userId: req.user._id }).select("-__v");
     res.status(200).send(events);
   } catch (e) {
     next(e);
   }
 };
-exports.getOneEvent = async (req, res, next) => {
+exports.getOneGroupEventSchema = async (req, res, next) => {
   try {
-    const event = await Event.findById(req.params.id).select('-__v');
+    const event = await GroupEventSchema.find({groupId: req.params.id}).select('-__v');
     if (!event) throw new createError.NotFound();
     res.status(200).send(event);
   } catch (e) {
@@ -29,8 +29,8 @@ exports.getOneEvent = async (req, res, next) => {
   }
 };
 
-exports.deleteEvent = async (req, res, next) => {
-  const events = await Event.findOne({ _id: req.params.id });
+exports.deleteGroupEventSchema = async (req, res, next) => {
+  const events = await GroupEventSchema.findOne({ _id: req.params.id });
   const filename = events.imgCollection;
 
   for (var i = 0; i < filename.length; i++) {
@@ -40,7 +40,7 @@ exports.deleteEvent = async (req, res, next) => {
   }
 
   try {
-    const event = await Event.findByIdAndDelete(req.params.id);
+    const event = await GroupEventSchema.findByIdAndDelete(req.params.id);
     res.status(200).json({
       message: "Object supprimé",
     });
@@ -51,7 +51,7 @@ exports.deleteEvent = async (req, res, next) => {
   }
 };
 
-exports.updateEvent = async (req, res, next) => {
+exports.updateGroupEventSchema = async (req, res, next) => {
    const reqFiles = [];
   //  req.protocol + "://"
    if (req.file) {
@@ -66,7 +66,7 @@ exports.updateEvent = async (req, res, next) => {
          imgCollection: reqFiles,
        }
      : { ...req.body };
-   Event.findByIdAndUpdate(
+   GroupEventSchema.findByIdAndUpdate(
      {
        _id: req.params.id,
      },
@@ -87,16 +87,16 @@ exports.updateEvent = async (req, res, next) => {
      );
 };
 
-exports.addEvent = async (req, res, next) => {
+exports.addGroupEventSchema = async (req, res, next) => {
   try {
     const reqFiles = [];
     const url = "http://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
-    const event = new Event({
+    const event = new GroupEventSchema({
       ...req.body,
-      userId: req.user._id,
+      groupId: req.body.groupId,
       imgCollection: reqFiles,
     });
     await event.save();

@@ -4,7 +4,8 @@ const createError = require("http-errors");
 exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find()
-      .sort("lastName")
+      .populate('group', '_id')
+      // .sort("lastName")
       .select("-password -__v -tokens._id -email -role -updatedAt -createdAt");
     res.status(200).send(users);
   } catch (e) {

@@ -47,9 +47,16 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
+// const app = require('express')();
+// const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+io.on('connection', () => { /* … */ });
+
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+
 
 
 
@@ -89,3 +96,4 @@ function onListening() {
     :  addr.port;
   debug(`App running at http://${host}:${bind}`);
 }
+

@@ -5,19 +5,34 @@ const {
   addGroup,
   getGroup,
   deleteGroup,
-  updateGroup
+  joinGroup,
+  publicGroups,
+  updateGroup,
+  getAllMembers
 } = require('../controllers/groupController');
 const auth = require('../middleware/authenticator');
+const upload = require('../middleware/multer-config');
 
 router
   .route('/')
-  .get(auth, getAllGroup)
-  .post(auth, addGroup);
+  .get(getAllGroup)
+  .post(auth,upload.array('imgCollection', 3), addGroup)
+router
+  .route("/members/:id")
+  .get(getAllMembers)
+
+router 
+.route("/public")
+    .get(publicGroups)
 
 router
   .route('/:id')
-  .get(auth, getGroup)
+  .put(auth,joinGroup)
+  .get( getGroup)
   .delete(auth, deleteGroup)
-  .put(auth,   updateGroup);
+  .put(auth, updateGroup);
+
+
+
 
 module.exports = router;

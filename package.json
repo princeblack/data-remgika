@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=data-remgika:* nodemon --inspect ./bin/www",
+    "start": "DEBUG=data-remgika:* nodemon --inspect app.js",
     "remote": "NODE_ENV=production DEBUG=data-remgika-:* nodemon --inspect ./bin/www",
     "build": "node build --output public"
   },
@@ -24,6 +24,7 @@
     "nodemon": "^2.0.3",
     "react-slick": "^0.25.2",
     "slick-carousel": "^1.8.1",
+    "socket.io": "^2.3.0",
     "uuid": "^7.0.2"
   }
 }
