@@ -17,7 +17,13 @@ exports.addComment = async (req, res, next) => {
 
 exports.getComment= async (req, res, next)=>{
   try {
-    const comment = await Comment.find().sort("createdAt").select(
+    const comment = await Comment.find({postId: req.params.id})
+    .populate({
+      path: "writer",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt -eventLike -group -groupLike -like",
+    })
+    .sort("-createdAt").select(
       "-__v"
     );    
     res.status(200).send(comment);

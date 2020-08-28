@@ -6,7 +6,7 @@ exports.getAllUsers = async (req, res, next) => {
     const users = await User.find()
       .populate('group', '_id')
       // .sort("lastName")
-      .select("-password -__v -tokens._id -email -role -updatedAt -createdAt");
+      .select("-password -__v -tokens._id  -role -updatedAt -createdAt");
     res.status(200).send(users);
   } catch (e) {
     next(e);
@@ -15,7 +15,13 @@ exports.getAllUsers = async (req, res, next) => {
 
 exports.getOneUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).select("-password -__v");
+    const user = await User.findById(req.params.id)
+    .populate({
+      path: "group",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .select("-password -__v");
     if (!user) throw new createError.NotFound();
     res.status(200).send(user );
   } catch (e) {
@@ -53,7 +59,16 @@ exports.updateUser = async (req, res, next) => {
 
 exports.addUser = async (req, res, next) => {
   try {
-    const user = new User(req.body);
+    const reqFiles = [];
+    const url = "http://" + req.get("host");
+    for (var i = 0; i < req.files.length; i++) {
+      reqFiles.push(url + "/static/images/" + req.files[i].filename);
+    }
+    const user = new User({
+      ...req.body , 
+      imgCollection: reqFiles,
+    });
+    console.log(user);
     const token = user.generateAuthToken();
     await user.save();
     const data = user.getPublicFields();
@@ -64,7 +79,7 @@ exports.addUser = async (req, res, next) => {
         secure: false, // if we are not using https
         httpOnly: false
       })
-      .send({ message: " The User is add successfully ", data });
+      .send(data);
   } catch (e) {
     next(e);
   }
@@ -74,11 +89,16 @@ exports.loginUser = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   try {
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email }).populate({
+      path: "group",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
     const token = user.generateAuthToken();
     const canLogin = await user.checkPassword(password);
     if (!canLogin) throw new createError.NotFound();
     const data = user.getPublicFields();
+    console.log(data);
     res
       .status(200)
       .cookie('token', token, {

@@ -6,6 +6,7 @@ const {
 } = require('../validators/validator');
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
+const upload = require('../middleware/multer-config');
 
 const {
   getAllUsers,
@@ -22,8 +23,8 @@ router
   .route('/')
   // .get(auth,isAdmin, getAllUsers)
   .get(getAllUsers)
-  .post(userValidationRules(), userValidationErrorHandling, addUser);
-
+  .post( upload.array('imgCollection', 3),userValidationRules(), userValidationErrorHandling, addUser);
+  // userValidationRules(), userValidationErrorHandling,
 router.route('/auth').get(auth, authenticateUser);
 router.route('/login').post(loginUser);
 router.route('/logout').post(auth, logoutUser);

@@ -6,7 +6,9 @@ const {
   getOnePlayground,
   deletePlayground,
   updatePlayground,
-  addPlayground
+  addPlayground,
+  likeOnePlayground,
+  unLikeOnePlayground
 } = require('../controllers/PlaygroundController');
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
@@ -24,5 +26,15 @@ router
   .get(getOnePlayground)
   .delete(auth, isAdmin, deletePlayground)
   .put(auth, isAdmin,upload.array('imgCollection', 3), updatePlayground);
+
+router
+  .route('/like/:id')
+  .put(auth, likeOnePlayground);
+
+router
+  .route('/unlike/:id')
+  .put(auth, unLikeOnePlayground);
+  
+
 
 module.exports = router;

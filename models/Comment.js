@@ -3,16 +3,16 @@ const { Schema } = mongoose;
 
 const commentSchema =  new Schema({
     writer: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }, 
+    reply: {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
+    },
     postId: {
-        type:String
-    },
-    firstName:{
-        type:String
-    },
-    lastName:{
-        type:String
+        type: Schema.Types.ObjectId,
+        ref: 'Playground'
     },
     content: {
         type: String

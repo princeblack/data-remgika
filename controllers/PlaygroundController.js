@@ -36,7 +36,7 @@ exports.getOnePlayground = async (req, res, next) => {
 
 exports.updatePlayground = async (req, res, next) => {
   const reqFiles = [];
-  if (req.file) {
+  if (req.files) {
     const url = "http://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
@@ -94,8 +94,8 @@ exports.deletePlayground = async (req, res, next) => {
 
   for (var i = 0; i < filename.length; i++) {
     // deleting the files works perfectly
-    const file = filename[i].slice(36);    
-    fs.unlink(`public/images/${file}`,async () => {});
+    const file = filename[i].slice(36);
+    fs.unlink(`public/images/${file}`, async () => {});
   }
 
   try {
@@ -107,5 +107,101 @@ exports.deletePlayground = async (req, res, next) => {
     res.status(400).json({
       error,
     });
+  }
+};
+
+exports.likeOnePlayground = async (req, res, next) => {
+  try {
+    const findLike = await Playground.find({
+      _id: req.params.id,
+      likeUser: { $in: [req.user._id] },
+    });
+    const findUnLike = await Playground.find({
+      _id: req.params.id,
+      unLikeUser: { $in: [req.user._id] },
+    });
+
+
+    if (findLike.length === 0 && findUnLike.length === 0) {
+
+      const like = await Playground.updateOne(
+        { _id: req.params.id },
+        { $inc: { like: +1 }, $addToSet: { likeUser: req.user._id } }
+      );
+      res.status(200).send({ message: "i like this play" });
+    } else if (findLike.length > 0) {
+
+      const like = await Playground.updateOne(
+        { _id: req.params.id },
+        { $inc: { like: -1 }, $pull: { likeUser: req.user._id } }
+      );
+      res
+        .status(200)
+        .send({ message: "i already like this play so i dislike" });
+    } else if (findUnLike.length > 0) {
+
+      const like = await Playground.updateOne(
+        { _id: req.params.id },
+        {
+          $inc: { like: +1 , unlike: -1},
+          $addToSet: { likeUser: req.user._id },
+          $pull: { unLikeUser: req.user._id },
+        }
+      );
+      res
+        .status(200)
+        .send({
+          message: "i already unlike this play so i disunlike and like",
+        });
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.unLikeOnePlayground = async (req, res, next) => {
+  try {
+    const findLike = await Playground.find({
+      _id: req.params.id,
+      likeUser: { $in: [req.user._id] },
+    });
+    const findUnLike = await Playground.find({
+      _id: req.params.id,
+      unLikeUser: { $in: [req.user._id] },
+    });
+
+    if (findLike.length === 0 && findUnLike.length === 0) {
+      const like = await Playground.updateOne(
+        { _id: req.params.id },
+        { $inc: { unlike: +1 }, $addToSet: { unLikeUser: req.user._id } }
+      );
+      res.status(200).send({ message: "i like this play" });
+    } else if (findUnLike.length > 0) {
+
+      const like = await Playground.updateOne(
+        { _id: req.params.id },
+        { $inc: { unlike: -1 }, $pull: { unLikeUser: req.user._id } }
+      );
+      res
+        .status(200)
+        .send({ message: "i already like this play so i dislike" });
+    } else if (findLike.length > 0) {
+
+      const like = await Playground.updateOne(
+        { _id: req.params.id },
+        { 
+          $inc: { like: -1, unlike: +1}, 
+          $pull: { likeUser: req.user._id },
+          $addToSet: { unLikeUser: req.user._id }
+       },
+      );
+      res
+        .status(200)
+        .send({
+          message: "i already unlike this play so i disunlike and like",
+        });
+    }
+  } catch (e) {
+    next(e);
   }
 };

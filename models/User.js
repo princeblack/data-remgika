@@ -32,7 +32,24 @@ const UserSchema = new Schema(
     group:[{
       type:Schema.Types.ObjectId,
       ref: "Group"
-    }]
+    }],
+    groupLike:[{
+      type:Schema.Types.ObjectId,
+      ref: "Group"
+    }],
+    eventLike:[{
+      type:Schema.Types.ObjectId,
+      ref: "Event"
+    }],
+    like:[{
+      type:Schema.Types.ObjectId,
+      ref: "Like"
+    }],
+    imgCollection: {
+      type: Array,
+      required: true
+    }
+
   },
   {
     timestamps: true

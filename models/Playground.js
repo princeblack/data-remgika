@@ -1,39 +1,50 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const PlaygroundSchema = new Schema(
   {
     userID: {
       type: String,
-      required: true
+      required: true,
     },
     imgCollection: {
       type: Array,
-      required: true
+      required: true,
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     street: {
       type: String,
-      required: true
+      required: true,
     },
     description: {
       type: String,
-      required: true
+      required: true,
     },
-    link:{
+    like: {
       type: Number,
+      default: 0
     },
-    unlike:{
-      type: Number
-    }
-
+    unlike: {
+      type: Number,
+      default: 0
+    },
+    likeUser: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    unLikeUser:[ {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Playground', PlaygroundSchema);
+module.exports = mongoose.model("Playground", PlaygroundSchema);

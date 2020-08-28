@@ -17,10 +17,14 @@ const GroupSchema = new Schema(
     },
     admin: [
       {
-        adminUsers: {
           type: Schema.Types.ObjectId,
           ref: "User",
-        },
+      },
+    ],
+    joindReq: [
+      {
+          type: Schema.Types.ObjectId,
+          ref: "User",
       },
     ],
     confidentiality: {
