@@ -7,6 +7,7 @@ const {
   updateEvent,
   addEvent,
   getMyEvents,
+  joinEvent,
 } = require("../controllers/eventController");
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
@@ -24,5 +25,10 @@ router
   .get(getOneEvent)
   .delete(auth, isAdmin, deleteEvent)
   .put(auth, isAdmin, upload.array("imgCollection", 3), updateEvent);
+
+router
+  .route("/participation/:id")
+  .put(auth, joinEvent);
+
 
 module.exports = router;

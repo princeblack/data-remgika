@@ -105,3 +105,29 @@ exports.addEvent = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.joinEvent = async (req, res, next) =>{
+  try {
+    const checkUser = await Event.find({
+      _id : req.params.id,
+      participants: { $in: [req.user._id] },
+     })
+    console.log(checkUser.length);
+    if (checkUser.length === 0) {
+      const event = await Event.updateOne(
+        {_id : req.params.id},
+        { $inc: { participantsNumber: +1 }, $addToSet: { participants: req.user._id } }
+        )
+        res.status(200).send(event);
+
+    } else {
+      const event = await Event.updateOne(
+        {_id : req.params.id},
+        { $inc: { participantsNumber: -1 }, $pull: { participants: req.user._id } }
+        )
+        res.status(200).send(event);
+    }
+  } catch (error) {
+    next(error)
+  }
+}
