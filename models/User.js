@@ -29,6 +29,14 @@ const UserSchema = new Schema(
       enum: ["Admin", "User"],
       required: true
     },
+    friend:[{
+      type:Schema.Types.ObjectId,
+      ref: "user"
+    }],
+    friendReq:[{
+      type:Schema.Types.ObjectId,
+      ref: "user"
+    }],
     group:[{
       type:Schema.Types.ObjectId,
       ref: "Group"
@@ -36,6 +44,10 @@ const UserSchema = new Schema(
     groupLike:[{
       type:Schema.Types.ObjectId,
       ref: "Group"
+    }],
+    event:[{
+      type:Schema.Types.ObjectId,
+      ref: "Event"
     }],
     eventLike:[{
       type:Schema.Types.ObjectId,

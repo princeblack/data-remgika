@@ -4,7 +4,16 @@ const fs = require("fs");
 
 exports.getAllPlaygrounds = async (req, res, next) => {
   try {
+    const total= await Playground.countDocuments()
+    let {skip= 0, limit = 10}= req.query
+    skip = Number(skip) || 0;
+    limit = Number(limit) || 10;
+    skip = skip < 0 ? 0 : skip;
+    limit = Math.min(50, Math.max(1, limit));
+ 
     const playgrounds = await Playground.find()
+      .skip(skip)
+      .limit(limit)
       .sort("createdAt")
       .select("-__v");
     res.status(200).send(playgrounds);
