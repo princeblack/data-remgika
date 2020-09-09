@@ -31,11 +31,19 @@ const UserSchema = new Schema(
     },
     friend:[{
       type:Schema.Types.ObjectId,
-      ref: "user"
+      ref: "User"
+    }],
+    friendId:[{
+      type:Schema.Types.ObjectId,
+      ref: "User"
     }],
     friendReq:[{
       type:Schema.Types.ObjectId,
-      ref: "user"
+      ref: "User"
+    }],
+    friendReqId:[{
+      type:Schema.Types.ObjectId,
+      ref: "User"
     }],
     group:[{
       type:Schema.Types.ObjectId,

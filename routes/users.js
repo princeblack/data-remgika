@@ -16,7 +16,11 @@ const {
   updateUser,
   authenticateUser,
   loginUser,
-  logoutUser
+  logoutUser,
+  friendReq,
+  accepteFriend,
+  refuseFriend,
+  removeFriend
 } = require('../controllers/usersController');
 
 router
@@ -32,5 +36,18 @@ router.route('/logout').post(auth, logoutUser);
 router.route('/:id').get( getOneUser)
 router.route('/:id').delete(auth, deleteUser)
 router.route('/:id').put(auth, updateUser);
+
+router
+  .route('/friend/:id')
+  .put( auth, friendReq)
+router
+  .route('/accepteFriend/:id')
+  .put( auth, accepteFriend)
+router
+  .route('/refuseFriend/:id')
+  .put( auth, refuseFriend)
+router
+  .route('/removeFriend/:id')
+  .put( auth, removeFriend)
 
 module.exports = router;

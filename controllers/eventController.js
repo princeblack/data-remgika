@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const User = require("../models/User");
 const createError = require('http-errors');
 const fs = require("fs");
 
@@ -112,7 +113,6 @@ exports.joinEvent = async (req, res, next) =>{
       _id : req.params.id,
       participants: { $in: [req.user._id] },
      })
-    console.log(checkUser.length);
     if (checkUser.length === 0) {
       const event = await Event.updateOne(
         {_id : req.params.id},

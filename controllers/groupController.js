@@ -127,7 +127,7 @@ exports.addGroup = async (req, res, next) => {
       (gb = async () => {
         const user = await User.updateOne(
           { _id: req.user._id },
-          { $push: { group: groups._id } }
+          { $addToSet: { group: groups._id } }
         );
         res.status(200).send(groups);
       })
