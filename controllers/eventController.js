@@ -42,6 +42,10 @@ exports.deleteEvent = async (req, res, next) => {
 
   try {
     const event = await Event.findByIdAndDelete(req.params.id);
+    const evantId = event['_id'].toString()
+    const user = await User.updateOne(
+      {_id: req.user._id},
+      { $pull: { event: evantId}})
     res.status(200).json({
       message: "Object supprimé",
     });
@@ -100,6 +104,10 @@ exports.addEvent = async (req, res, next) => {
       userId: req.user._id,
       imgCollection: reqFiles,
     });
+    const evantId = event['_id'].toString()
+    const user = await User.updateOne(
+      {_id: req.user._id},
+      { $addToSet: { event: evantId}})
     await event.save();
     res.status(200).send(event);
   } catch (error) {

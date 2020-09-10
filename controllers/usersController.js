@@ -20,6 +20,12 @@ exports.getOneUser = async (req, res, next) => {
         path: "friendReq",
         select:
           "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      },
+      )
+      .populate({
+        path: "event",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
       })
       .populate({
         path: "group",
