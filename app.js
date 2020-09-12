@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-
 /**
  * Module dependencies.
  */
 
+
 // var app = require('../app');
 const express = require("express");
-const path = require("path");
 var debug = require('debug')('data-remgika:server');
 var http = require('http');
 /** INIT THE SERVER */
@@ -106,7 +105,9 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 var morgan = require("morgan");
+const path = require('path');
 const cors = require("cors");
+// const server = require('./bin/www')
 
 /** ROUTERS */
 const indexRouter = require("./routes/index");
@@ -126,7 +127,8 @@ const env = require("./config/config");
 
 
 app.enable("trust proxy"); //needed if you're behind a load balancer
-
+app.enable('trust proxy'); // trust all
+app.set('trust proxy', true); // same as above
 app.use(helmet());
 app.use(morgan("common"));
 /** LOGS */
@@ -172,6 +174,7 @@ app.use(
 const io = require('socket.io')(server);
 io.on('connection', (socket) => { 
   console.log("user connected");
+  // console.log(socket);
   socket.on('join', async ({name, room, userId}, callback)  =>{
       socket.join(room)
       socket.emit("welcome", {user: 'admin', text: `${name}, welcomwe to the room `})

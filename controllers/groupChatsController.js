@@ -4,7 +4,7 @@ const { models } = require("mongoose");
 exports.getGroupChats = async (req, res, next) => {
   try {
     // const pagination = req.query.pagination ? parseInt(req.query.pagination):5;
-   const total= await GroupChats.find({ groupId: req.params.id }).count()
+   const total= await GroupChats.find({ groupId: req.params.id }).countDocuments()
     // const page =req.query.page ? parseInt(req.query.page):1;
     let { skip = 0, limit = 10} = req.query;
     skip = parseInt(skip) || 0;
