@@ -20,7 +20,8 @@ const {
   friendReq,
   accepteFriend,
   refuseFriend,
-  removeFriend
+  removeFriend,
+  updateUserImage
 } = require('../controllers/usersController');
 
 router
@@ -32,10 +33,14 @@ router
 router.route('/auth').get(auth, authenticateUser);
 router.route('/login').post(loginUser);
 router.route('/logout').post(auth, logoutUser);
+router
+  .route('/userImage')
+  .put( auth,upload.array('imgCollection', 3), updateUserImage)
 
 router.route('/:id').get( getOneUser)
 router.route('/:id').delete(auth, deleteUser)
 router.route('/:id').put(auth, updateUser);
+
 
 router
   .route('/friend/:id')

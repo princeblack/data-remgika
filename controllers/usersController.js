@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const fs = require("fs")
 const createError = require("http-errors");
 
 exports.getAllUsers = async (req, res, next) => {
@@ -20,8 +21,7 @@ exports.getOneUser = async (req, res, next) => {
         path: "friendReq",
         select:
           "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-      },
-      )
+      })
       .populate({
         path: "event",
         select:
@@ -67,9 +67,37 @@ exports.updateUser = async (req, res, next) => {
     });
     if (!user) throw new createError.NotFound();
     const data = user.getPublicFields();
-    res.status(200).send({ message: " The User data is Updated ", data });
+    res.status(200).send({ message: " The User data is Updated " });
   } catch (e) {
     next(e);
+  }
+};
+
+exports.updateUserImage = async (req, res, next) => {
+  try {
+    const image = await User.findOne({ _id: req.user._id });
+    const useImage = image.imgCollection;
+    for (var i = 0; i < useImage.length; i++) {
+      // deleting the files works perfectly
+      const file = useImage[i].slice(36);
+      fs.unlink(`public/images/${file}`, async () => {});
+    }
+
+    const reqFiles = [];
+    const url = "https://" + req.get("host");
+    for (var i = 0; i < req.files.length; i++) {
+      reqFiles.push(url + "/static/images/" + req.files[i].filename);
+    }
+    console.log(reqFiles);
+    const user = await User.updateOne(
+      { _id: req.user._id },
+      {
+        imgCollection: reqFiles,
+      }
+    );
+    res.status(200).send({ message: " The User data is Updated " });
+  } catch (error) {
+    next(error);
   }
 };
 exports.friendReq = async (req, res, next) => {
@@ -106,15 +134,21 @@ exports.accepteFriend = async (req, res, next) => {
     if (check.length > 0) {
       const user = await User.updateOne(
         { _id: req.params.id },
-        { $pull: { friendReq: req.user._id, friendReqId: req.user._id }, $addToSet: { friend: req.user._id, friendId: req.user._id }},
+        {
+          $pull: { friendReq: req.user._id, friendReqId: req.user._id },
+          $addToSet: { friend: req.user._id, friendId: req.user._id },
+        }
         // { $addToSet: { friend: req.user._id, friendId: req.user._id } }
       );
       const friend = await User.updateOne(
         { _id: req.user._id },
-        { $pull: { friendReq: req.params.id, friendReqId: req.params.id } , $addToSet: { friend: req.params.id, friendId: req.params.id } },
+        {
+          $pull: { friendReq: req.params.id, friendReqId: req.params.id },
+          $addToSet: { friend: req.params.id, friendId: req.params.id },
+        }
         // { $addToSet: { friend: req.params.id, friendId: req.params.id } }
       );
-      res.status(200).send({message: "accepte successfuly"});
+      res.status(200).send({ message: "accepte successfuly" });
       if (!user) throw new createError.NotFound();
     } else {
       res.status(200).send(check);
@@ -157,9 +191,9 @@ exports.removeFriend = async (req, res, next) => {
       );
       const friend = await User.updateOne(
         { _id: req.params.id },
-        { $pull: { friend: req.user._id, friendId: req.user._id} },
+        { $pull: { friend: req.user._id, friendId: req.user._id } }
       );
-      res.status(200).send({message: "friend remove"});
+      res.status(200).send({ message: "friend remove" });
       if (!user) throw new createError.NotFound();
     } else {
       res.status(200).send(check);
@@ -172,7 +206,7 @@ exports.removeFriend = async (req, res, next) => {
 exports.addUser = async (req, res, next) => {
   try {
     const reqFiles = [];
-    const url = "http://" + req.get("host");
+    const url = "https://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
