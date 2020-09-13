@@ -2,6 +2,7 @@
   "name": "data-remgika",
   "version": "0.0.0",
   "private": true,
+  "restart_delay": 3000,
   "scripts": {
     "start": "DEBUG=data-remgika:* nodemon --inspect app.js",
     "remote": "NODE_ENV=production DEBUG=data-remgika-:* nodemon --inspect app.js",
