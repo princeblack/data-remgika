@@ -171,34 +171,34 @@ app.use(
 
   })
 );
-const io = require('socket.io')(server);
-io.on('connection', (socket) => { 
-  console.log("user connected");
-  // console.log(socket);
-  socket.on('join', async ({name, room, userId}, callback)  =>{
-      socket.join(room)
-      socket.emit("welcome", {user: 'admin', text: `${name}, welcomwe to the room `})
-      socket.broadcast.to(room).emit('welcome', {user : 'admin', text: `${name}, has joind!`})
-  })
+// const io = require('socket.io')(server);
+// io.on('connection', (socket) => { 
+//   console.log("user connected");
+//   // console.log(socket);
+//   socket.on('join', async ({name, room, userId}, callback)  =>{
+//       socket.join(room)
+//       socket.emit("welcome", {user: 'admin', text: `${name}, welcomwe to the room `})
+//       socket.broadcast.to(room).emit('welcome', {user : 'admin', text: `${name}, has joind!`})
+//   })
 
-  socket.on("sendMessage", async ({message, room, name, userId})=>{
-      try {
-          const Chats = new GroupChats({
-              userId : userId,
-              groupId:  room,
-              message: message
-          })
-          await Chats.save();
-          io.to(room).emit('message', { name: name, user: userId, text: message})
-      } catch (error) {
-          return error
-      }
-  })
+//   socket.on("sendMessage", async ({message, room, name, userId})=>{
+//       try {
+//           const Chats = new GroupChats({
+//               userId : userId,
+//               groupId:  room,
+//               message: message
+//           })
+//           await Chats.save();
+//           io.to(room).emit('message', { name: name, user: userId, text: message})
+//       } catch (error) {
+//           return error
+//       }
+//   })
 
-  socket.on('disconnect', ()=>{
-      console.log('user had left;;;');
-  })
-});
+//   socket.on('disconnect', ()=>{
+//       console.log('user had left;;;');
+//   })
+// });
 /** STATIC FILES */
 app.use("/static", express.static(path.join(__dirname, "public")));
 
