@@ -1,18 +1,3 @@
-
-// var app = require('../app');
-const express = require("express");
-/** INIT THE SERVER */
-const app = express();
-/**
- * Normalize a port into a number, string, or false.
- */
-
-
-
-
-
-/** EXTERNAL DEPENDENCIES */
-
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
@@ -20,6 +5,14 @@ const helmet = require("helmet");
 var morgan = require("morgan");
 const path = require('path');
 const cors = require("cors");
+const express = require("express");
+
+/** INIT THE SERVER */
+const app = express();
+
+/** EXTERNAL DEPENDENCIES */
+
+
 // const server = require('./bin/www')
 
 /** ROUTERS */
@@ -40,7 +33,6 @@ const env = require("./config/config");
 
 
 app.enable("trust proxy"); //needed if you're behind a load balancer
-app.enable('trust proxy'); // trust all
 app.set('trust proxy', true); // same as above
 app.use(helmet());
 app.use(morgan("common"));
@@ -81,6 +73,9 @@ app.use(
   })
 );
 
+app.get('/' ,function (req,res) {
+  res.sendFile(__dirname + '/public/index.html');
+})
 /** STATIC FILES */
 app.use("/static", express.static(path.join(__dirname, "public")));
 

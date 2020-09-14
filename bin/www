@@ -15,6 +15,7 @@ const GroupChats = require("../models/chat")
 
 var port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
+console.log(port);
 
 /**
  * Create HTTP server.
