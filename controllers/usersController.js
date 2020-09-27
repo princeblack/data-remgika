@@ -210,8 +210,14 @@ exports.addUser = async (req, res, next) => {
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
+    const letSplit = req.body.location.split(",");
+    const lng = parseFloat(letSplit[0]);
+    const lat = parseFloat(letSplit[1]);
+    const resultat = new Array(lng, lat);
+    const denver = { type: "Point", coordinates: resultat };
     const user = new User({
       ...req.body,
+      location: denver,
       imgCollection: reqFiles,
     });
     const token = user.generateAuthToken();
@@ -258,6 +264,7 @@ exports.loginUser = async (req, res, next) => {
 
 exports.authenticateUser = async (req, res, next) => {
   res.status(200).send(req.user);
+  console.log(req.user);
 };
 
 exports.logoutUser = async (req, res, next) => {

@@ -10,7 +10,7 @@ exports.postGroupNews = async (req, res, next) =>{
             reqFiles.push(url + "/static/images/" + req.files[i].filename);
           }
         const groupNews = await GroupNews({
-            ...req.body,
+            content: `${req.body.content}`,
             userId: req.user._id,
             groupId: req.body.groupId,
             imgCollection: reqFiles,

@@ -29,6 +29,21 @@ const UserSchema = new Schema(
       enum: ["Admin", "User"],
       required: true
     },
+    city: {
+      type: String,
+      required: true,
+    },
+    location:{
+      type:{
+        type: String,
+        enum: ['Point'],
+        required: true
+      },
+      coordinates:{
+        type: [Number],
+        required: true
+      }
+    },
     friend:[{
       type:Schema.Types.ObjectId,
       ref: "User"
@@ -75,7 +90,9 @@ const UserSchema = new Schema(
     timestamps: true
   }
 );
-
+UserSchema.index({
+  location: "2dsphere"
+});
 UserSchema.methods.generateAuthToken = function() {
   const user = this;
   const access = "x-auth";

@@ -27,6 +27,7 @@ const groupNewsRouter = require('./routes/groupNewsRoute')
 const groupEventRouter = require('./routes/groupEventRoute')
 const groupChat = require("./routes/groupChats")
 const GroupChats = require("./models/chat")
+const articles = require("./routes/article")
 
 /** OUR MIDDLEWARE */
 const env = require("./config/config");
@@ -90,6 +91,7 @@ app.use("/comment", comment);
 app.use("/news", groupNewsRouter);
 app.use("/groupEvent", groupEventRouter);
 app.use("/groupChats", groupChat)
+app.use("/articles", articles)
 /** ERROR HANDLING */
 app.use(function (req, res, next) {
   const err = new Error("Looks like something is broken...");
