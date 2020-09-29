@@ -264,7 +264,6 @@ exports.loginUser = async (req, res, next) => {
 
 exports.authenticateUser = async (req, res, next) => {
   res.status(200).send(req.user);
-  console.log(req.user);
 };
 
 exports.logoutUser = async (req, res, next) => {

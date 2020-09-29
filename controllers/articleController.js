@@ -34,7 +34,6 @@ exports.newArticle = async (req, res, next) => {
 exports.getArtile = async (req, res, next) => {
   try {
     const artile = await Articles.findById({ _id: req.params.id });
-    await (await artile).save();
     res.status(200).send(artile);
   } catch (error) {
     next(error);
@@ -121,6 +120,14 @@ exports.getMatchArticles = async (req,res,next)=>{
     ])
     .sort({ score: { $meta: "textScore" } })
     .limit(10)
+    res.status(200).send(articles)
+  } catch (error) {
+    next(error)
+  }
+}
+exports.getUserArticles = async (req,res,next) =>{
+  try {
+    const articles = await Articles.find({userId: req.params.id}).sort('createdAt')
     res.status(200).send(articles)
   } catch (error) {
     next(error)

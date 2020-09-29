@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router()
-const { newArticle, getArtile , getArticlesByCity, getAllArticles, getMatchArticles} = require("../controllers/articleController");
+const { newArticle, getArtile , getArticlesByCity, getAllArticles, getMatchArticles, getUserArticles} = require("../controllers/articleController");
 const auth = require('../middleware/authenticator');
 const upload = require("../middleware/multer-config");
 
@@ -16,6 +16,10 @@ router
 router
   .route("/city")
   .get(getArticlesByCity)
+
+router
+  .route("/user/:id")
+  .get(auth, getUserArticles)
 router
   .route("/:id")
   .get(getArtile)
