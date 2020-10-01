@@ -2,6 +2,7 @@ const Articles = require("../models/Articles");
 const createError = require("http-errors");
 const fs = require("fs");
 const { send } = require("process");
+const User = require("../models/User");
 
 exports.newArticle = async (req, res, next) => {
   try {
@@ -25,7 +26,111 @@ exports.newArticle = async (req, res, next) => {
     });
     await article.save();
     res.status(200).send(article);
-    console.log(article);
+  } catch (error) {
+    next(error);
+  }
+};
+exports.saveArticle = async (req, res, next) => {
+  try {
+    const findSave = await Articles.find({
+      _id: req.params.id,
+      articlesSave: { $in: [req.user._id] },
+    });
+    if (findSave.length === 0) {
+      const user = await Articles.updateOne(
+        { _id: req.params.id },
+        { $addToSet: { articlesSave: req.user._id } }
+      );
+      res.status(200).send(user);
+    } else {
+      const user = await Articles.updateOne(
+        { _id: req.params.id },
+        { $pull: { articlesSave: req.user._id } }
+      );
+      res.status(200).send(user);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+exports.deleteArticle = async (req, res, next) => {
+  try {
+    const image = await Articles.findOne({ _id: req.params.id });
+    const filename = image.imgCollection;
+    for (var i = 0; i < filename.length; i++) {
+      // deleting the files works perfectly
+      const file = filename[i].slice(36);
+      fs.unlink(`public/images/${file}`, async () => {});
+    }
+    const users = await Articles.findByIdAndDelete({
+      _id: req.params.id,
+      userId: req.user._id,
+    });
+    res.status(200).send({ message: "article is deteled" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateArticle = async (req, res, next) => {
+  try {
+  
+    const reqFiles = [];
+    if (req.files.length > 0) {
+      const image = await Articles.findOne({ _id: req.params.id });
+      const filename = image.imgCollection;
+      for (var i = 0; i < filename.length; i++) {
+        // deleting the files works perfectly
+        const file = filename[i].slice(36);
+        fs.unlink(`public/images/${file}`, async () => {});
+        const remove = Articles.updateOne({ _id: req.params.id },{$pull: {imgCollection: filename[i]}})
+      }
+      const url = "http://" + req.get("host");
+      for (var i = 0; i < req.files.length; i++) {
+        reqFiles.push(url + "/static/images/" + req.files[i].filename);
+      }
+    }
+
+    if (req.files.length === 0) {
+      const image = await Articles.findOne({ _id: req.params.id });
+      const filename = image.imgCollection;
+      const url = "http://" + req.get("host");
+      for (var i = 0; i < filename.length; i++) {
+        // deleting the files works perfectly
+        const file = filename[i].slice(36);
+        reqFiles.push(url + "/static/images/" + file);
+      }
+    }
+
+    const letSplit = req.body.location.split(",");
+    const lng = parseFloat(letSplit[0]);
+    const lat = parseFloat(letSplit[1]);
+    const resultat = new Array(lng, lat);
+    const denver = { type: "Point", coordinates: resultat };
+    const newArticle = req.files || req.files.length === 0
+      ? {
+          ...req.body,
+          location: denver,
+          imgCollection: reqFiles,
+        }
+      : {
+          ...req.body,
+          location: denver,
+        };
+
+    const articles = await Articles.updateMany(
+      {
+        _id: req.params.id,
+      },
+      {
+        ...req.body,
+          location: denver,
+          imgCollection: reqFiles,
+        _id: req.params.id,
+      }
+    );
+    res.status(200).send(articles);
+    console.log(articles);
   } catch (error) {
     next(error);
   }
@@ -102,7 +207,7 @@ exports.getArticlesByCity = async (req, res, next) => {
 
       res.status(200).send(articles);
     } else if (!city && !title) {
-      const articles = await Articles.aggregate([{$sample: {size: 10 }}])
+      const articles = await Articles.aggregate([{ $sample: { size: 10 } }]);
       res.status(200).send(articles);
     }
   } catch (error) {
@@ -110,26 +215,28 @@ exports.getArticlesByCity = async (req, res, next) => {
   }
 };
 
-exports.getMatchArticles = async (req,res,next)=>{
+exports.getMatchArticles = async (req, res, next) => {
   const title = req.query.title;
   try {
-    const articles = await  Articles.aggregate([
-      {$match:{$text: {$search: title}}},
-      {$project: {title: 1, _id:1, score: {$meta : "textScore"}}},
-      { $match: { score: { $gt: 1.0 } } }
+    const articles = await Articles.aggregate([
+      { $match: { $text: { $search: title } } },
+      { $project: { title: 1, _id: 1, score: { $meta: "textScore" } } },
+      { $match: { score: { $gt: 1.0 } } },
     ])
-    .sort({ score: { $meta: "textScore" } })
-    .limit(10)
-    res.status(200).send(articles)
+      .sort({ score: { $meta: "textScore" } })
+      .limit(10);
+    res.status(200).send(articles);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
-exports.getUserArticles = async (req,res,next) =>{
+};
+exports.getUserArticles = async (req, res, next) => {
   try {
-    const articles = await Articles.find({userId: req.params.id}).sort('createdAt')
-    res.status(200).send(articles)
+    const articles = await Articles.find({ userId: req.params.id }).sort(
+      "createdAt"
+    );
+    res.status(200).send(articles);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};

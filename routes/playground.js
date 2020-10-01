@@ -25,7 +25,7 @@ router
   .route('/:id')
   .get(getOnePlayground)
   .delete(auth, isAdmin, deletePlayground)
-  .put(auth, isAdmin,upload.array('imgCollection', 3), updatePlayground);
+  .put(auth, upload.array('imgCollection', 3), updatePlayground);
 
 router
   .route('/like/:id')

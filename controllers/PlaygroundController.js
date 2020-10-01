@@ -44,6 +44,8 @@ exports.getOnePlayground = async (req, res, next) => {
 };
 
 exports.updatePlayground = async (req, res, next) => {
+
+  console.log(req.body.playground);
   const reqFiles = [];
   if (req.files) {
     const url = "https://" + req.get("host");
@@ -57,6 +59,8 @@ exports.updatePlayground = async (req, res, next) => {
         imgCollection: reqFiles,
       }
     : { ...req.body };
+
+
   Playground.findByIdAndUpdate(
     {
       _id: req.params.id,

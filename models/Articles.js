@@ -42,6 +42,10 @@ const Article = new Schema(
       type: Boolean,
       default: false,
     },
+    articlesSave:[{
+      type:Schema.Types.ObjectId,
+      ref: "User"
+    }],
   },
   {
     timestamps: true,
@@ -53,4 +57,4 @@ Article.index(
 Article.index({
   location: "2dsphere"
 })
-module.exports = mongoose.model("articles", Article);
+module.exports = mongoose.model("Articles", Article);

@@ -80,6 +80,10 @@ const UserSchema = new Schema(
       type:Schema.Types.ObjectId,
       ref: "Like"
     }],
+    articlesSave:[{
+      type:Schema.Types.ObjectId,
+      ref: "Articles"
+    }],
     imgCollection: {
       type: Array,
       required: true
