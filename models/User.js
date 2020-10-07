@@ -80,9 +80,9 @@ const UserSchema = new Schema(
       type:Schema.Types.ObjectId,
       ref: "Like"
     }],
-    articlesSave:[{
+    messagerUsers:[{
       type:Schema.Types.ObjectId,
-      ref: "Articles"
+      ref: "User"
     }],
     imgCollection: {
       type: Array,
@@ -119,7 +119,12 @@ UserSchema.methods.getPublicFields = function() {
     lastName: this.lastName,
     firstName: this.firstName,
     email: this.email,
-    group: this.group
+    group: this.group,
+    role: this.role,
+    imgCollection: this.imgCollection,
+    messagerUsers: this.messagerUsers,
+    city: this.city,
+    location: this.location
   };
 };
 

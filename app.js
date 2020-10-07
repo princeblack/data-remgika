@@ -22,12 +22,13 @@ const playgroundRouter = require("./routes/playground");
 const groupRouter = require("./routes/group");
 const eventRouter = require("./routes/event");
 const profileImage = require("./routes/profileImage");
-const comment = require('./routes/comment')
-const groupNewsRouter = require('./routes/groupNewsRoute')
-const groupEventRouter = require('./routes/groupEventRoute')
-const groupChat = require("./routes/groupChats")
-const GroupChats = require("./models/chat")
-const articles = require("./routes/article")
+const comment = require('./routes/comment');
+const groupNewsRouter = require('./routes/groupNewsRoute');
+const groupEventRouter = require('./routes/groupEventRoute');
+const groupChat = require("./routes/groupChats");
+const GroupChats = require("./models/chat");
+const articles = require("./routes/article");
+const messager = require('./routes/message');
 
 /** OUR MIDDLEWARE */
 const env = require("./config/config");
@@ -92,6 +93,7 @@ app.use("/news", groupNewsRouter);
 app.use("/groupEvent", groupEventRouter);
 app.use("/groupChats", groupChat)
 app.use("/articles", articles)
+app.use("/message", messager)
 /** ERROR HANDLING */
 app.use(function (req, res, next) {
   const err = new Error("Looks like something is broken...");

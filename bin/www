@@ -7,8 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('data-remgika:server');
 var http = require('http');
-const GroupChats = require("../models/chat")
-
+const GroupChats = require("../models/chat");
+const UserChat = require('../models/UserChat');
+const User = require('../models/User');
 /**
  * Get port from environment and store in Express.
  */
@@ -54,6 +55,25 @@ io.on('connection', (socket) => {
       } catch (error) {
           return error
       }
+  })
+
+  socket.on("chatMessage", async ({message, room, name, userId, files, friend}) =>{
+    console.log(room);
+    try {
+      const chat = new UserChat({
+        userId : userId,
+        message : message,
+        files : files,
+        room : room,
+        to : friend
+      })
+      const user = await User.updateOne({_id: userId},{$addToSet : {messagerUsers: friend}})
+      const user2 = await User.updateOne({_id: friend},{$addToSet : {messagerUsers:userId }})
+      await chat.save()
+      io.to(room).emit('messager', {name : name, user: userId, message: message, files: files})
+    } catch (error) {
+      return error
+    }
   })
 
   socket.on('disconnect', ()=>{

@@ -5,7 +5,31 @@ const createError = require("http-errors");
 exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find()
-      .populate("group", "_id")
+    .populate({
+      path: "friendReq",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
+      path: "event",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
+      path: "group",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
+      path: "friend",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
+      path: "messagerUsers",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
       // .sort("lastName")
       .select("-password -__v -tokens._id  -role -updatedAt -createdAt");
     res.status(200).send(users);
@@ -36,6 +60,11 @@ exports.getOneUser = async (req, res, next) => {
         path: "friend",
         select:
           "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "messagerUsers",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt -eventLike -event -friend -friendId -friendReq -friendReqId -group -groupLike -like -location -messagerUsers",
       })
       .select("-password -__v");
     if (!user) throw new createError.NotFound();
@@ -84,7 +113,7 @@ exports.updateUserImage = async (req, res, next) => {
     }
 
     const reqFiles = [];
-    const url = "https://" + req.get("host");
+    const url = "http://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
@@ -206,7 +235,7 @@ exports.removeFriend = async (req, res, next) => {
 exports.addUser = async (req, res, next) => {
   try {
     const reqFiles = [];
-    const url = "https://" + req.get("host");
+    const url = "http://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
@@ -240,10 +269,33 @@ exports.loginUser = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   try {
-    const user = await User.findOne({ email }).populate({
+    const user = await User.findOne({ email })
+    .populate({
+      path: "friendReq",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
+      path: "event",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
       path: "group",
-      select: "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    });
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
+      path: "friend",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    .populate({
+      path: "messagerUsers",
+      select:
+        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    })
+    // .select("-password -__v");
     const token = user.generateAuthToken();
     const canLogin = await user.checkPassword(password);
     if (!canLogin) throw new createError.NotFound();
