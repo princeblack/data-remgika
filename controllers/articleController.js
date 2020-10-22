@@ -138,7 +138,7 @@ exports.updateArticle = async (req, res, next) => {
 
 exports.getArtile = async (req, res, next) => {
   try {
-    const artile = await Articles.findById({ _id: req.params.id });
+    const artile = await Articles.findById({ _id: req.params.id }).populate("userId");;
     res.status(200).send(artile);
   } catch (error) {
     next(error);

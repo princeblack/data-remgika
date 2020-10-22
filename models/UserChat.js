@@ -1,9 +1,10 @@
-const mongosse = require('mongoose')
+const mongosse = require('mongoose');
+const { array } = require('../middleware/multer-config');
 const {Schema }= mongosse
 
 const userChat = new Schema(
     {
-        userId : {
+        senderUserId : {
             type: Schema.Types.ObjectId,
             ref : "User"
         },
@@ -11,7 +12,7 @@ const userChat = new Schema(
             type: String
         },
         room : {
-            type: String
+            type: Array
         },
         files:{
             type: Array
@@ -20,13 +21,20 @@ const userChat = new Schema(
             type: Boolean,
             default : false
         },
-        to :{
+        receiverUserId :{
             type: Schema.Types.ObjectId,
             ref : "User"
         }
 
+    },{
+        timestamps: true
     }
 )
-
+userChat.index(
+    {senderUserId: 1}
+    )
+userChat.index({
+    receiverUserId: 1
+  })
 module.exports = mongosse.model("User-Chat", userChat);
 

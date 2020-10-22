@@ -1,14 +1,17 @@
-const {getMessage, unread} = require('../controllers/messager');
+const {getMessage, unread, getAllUserThatIChatWith , readMsg} = require('../controllers/messager');
 const auth = require('../middleware/authenticator');
 const express = require("express");
 const router = express.Router()
 
+router
+    .route('/getChatMembers')
+    .get(auth, getAllUserThatIChatWith )
 
 router
     .route('/:id')
     .get(auth, getMessage )
+    .put(auth,readMsg)
 
-router
-    .route('/unread/:id')
-    .get(auth, unread )
+
+
 module.exports = router

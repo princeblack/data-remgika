@@ -4,18 +4,18 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('data-remgika:server');
-var http = require('http');
+var app = require("../app");
+var debug = require("debug")("data-remgika:server");
+var http = require("http");
 const GroupChats = require("../models/chat");
-const UserChat = require('../models/UserChat');
-const User = require('../models/User');
+const UserChat = require("../models/UserChat");
+const User = require("../models/User");
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '8000');
-app.set('port', port);
+var port = normalizePort(process.env.PORT || "8000");
+app.set("port", port);
 console.log(port);
 
 /**
@@ -29,56 +29,73 @@ var server = http.createServer(app);
  */
 console.log(port);
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+server.on("error", onError);
+server.on("listening", onListening);
 
+const io = require("socket.io")(server);
 
-const io = require('socket.io')(server);
-io.on('connection', (socket) => { 
+io.on("connection", (socket) => {
   console.log("user connected");
-  // console.log(socket);
-  socket.on('join', async ({name, room, userId}, callback)  =>{
-      socket.join(room)
-      socket.emit("welcome", {user: 'admin', text: `${name}, welcomwe to the room `})
-      socket.broadcast.to(room).emit('welcome', {user : 'admin', text: `${name}, has joind!`})
-  })
 
-  socket.on("sendMessage", async ({message, room, name, userId})=>{
-      try {
-          const Chats = new GroupChats({
-              userId : userId,
-              groupId:  room,
-              message: message
-          })
-          await Chats.save();
-          io.to(room).emit('message', { name: name, user: userId, text: message})
-      } catch (error) {
-          return error
-      }
-  })
+  socket.on("join", async ({ name, room, userId }, callback) => {
+    socket.join(room);
+    socket.broadcast
+      .to(room)
+      .emit("welcome", { user: "admin", text: `${name}, has joind!` });
+  });
 
-  socket.on("chatMessage", async ({message, room, name, userId, files, friend}) =>{
-    console.log(room);
+  socket.on("sendMessage", async ({ message, room, name, userId }) => {
     try {
-      const chat = new UserChat({
-        userId : userId,
-        message : message,
-        files : files,
-        room : room,
-        to : friend
-      })
-      const user = await User.updateOne({_id: userId},{$addToSet : {messagerUsers: friend}})
-      const user2 = await User.updateOne({_id: friend},{$addToSet : {messagerUsers:userId }})
-      await chat.save()
-      io.to(room).emit('messager', {name : name, user: userId, message: message, files: files})
+      const Chats = new GroupChats({
+        userId: userId,
+        groupId: room,
+        message: message,
+      });
+      await Chats.save();
+      io.to(room).emit("message", { name: name, user: userId, text: message });
     } catch (error) {
-      return error
+      return error;
     }
-  })
+  });
+  socket.on("chat", async ({ name, room, room2, userId }, callback) => {
+    socket.join([room, room2]);
+    socket.broadcast
+      .to(room)
+      .to(room2)
+      .emit("welcome", { user: "admin", text: `${name}, has joind!` });
+  });
+  socket.on(
+    "chatMessage",
+    async ({ message, room, room2, name, userId, files, friend }) => {
+      const array = [room, room2];
+      try {
+        const chat = new UserChat({
+          senderUserId: userId,
+          message: message,
+          files: files,
+          room: array,
+          receiverUserId: friend,
+        });
 
-  socket.on('disconnect', ()=>{
-      console.log('user had left;;;');
-  })
+        await chat.save();
+          io.to(room2).to(room)
+          .emit("newMessage", {
+          name: name,
+          user: userId,
+          message: message,
+          files: files,
+          room: room,
+          room2: room2,
+        });
+      } catch (error) {
+        return error;
+      }
+    }
+  );
+ 
+  socket.on("disconnect", () => {
+    console.log("user had left;;;");
+  });
 });
 
 /**
@@ -106,22 +123,20 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
+  if (error.syscall !== "listen") {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
       process.exit(1);
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
       process.exit(1);
       break;
     default:
@@ -135,11 +150,6 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  debug("Listening on " + bind);
 }
-
-
-
