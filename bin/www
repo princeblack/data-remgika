@@ -38,36 +38,18 @@ io.on("connection", (socket) => {
   console.log("user connected");
 
   socket.on("join", async ({ name, room, userId }, callback) => {
+    console.log("user connected to join");
+
     socket.join(room);
     socket.broadcast
       .to(room)
       .emit("welcome", { user: "admin", text: `${name}, has joind!` });
   });
-
-  socket.on("sendMessage", async ({ message, room, name, userId }) => {
-    try {
-      const Chats = new GroupChats({
-        userId: userId,
-        groupId: room,
-        message: message,
-      });
-      await Chats.save();
-      io.to(room).emit("message", { name: name, user: userId, text: message });
-    } catch (error) {
-      return error;
-    }
-  });
-  socket.on("chat", async ({ name, room, room2, userId }, callback) => {
-    socket.join([room, room2]);
-    socket.broadcast
-      .to(room)
-      .to(room2)
-      .emit("welcome", { user: "admin", text: `${name}, has joind!` });
-  });
   socket.on(
-    "chatMessage",
+    "sendMessage",
     async ({ message, room, room2, name, userId, files, friend }) => {
       const array = [room, room2];
+      console.log("user connected to sendMessage");
       try {
         const chat = new UserChat({
           senderUserId: userId,
@@ -78,8 +60,37 @@ io.on("connection", (socket) => {
         });
 
         await chat.save();
-          io.to(room2).to(room)
-          .emit("newMessage", {
+      } catch (error) {
+        return error;
+      }
+    }
+  );
+  socket.on("chat", async ({ name, room, room2, userId }, callback) => {
+    console.log("user connected to chat room");
+
+    socket.join([room, room2]);
+    socket.broadcast
+      .to(room)
+      .to(room2)
+      .emit("welcome", { user: "admin", text: `${name}, has joind!` });
+  });
+  socket.on(
+    "chatMessage",
+    async ({ message, room, room2, name, userId, files, friend }) => {
+      const array = [room, room2];
+      console.log("user connected to chatMessage");
+
+      try {
+        const chat = new UserChat({
+          senderUserId: userId,
+          message: message,
+          files: files,
+          room: array,
+          receiverUserId: friend,
+        });
+
+        await chat.save();
+        io.to(room2).to(room).emit("newChat", {
           name: name,
           user: userId,
           message: message,
@@ -92,9 +103,18 @@ io.on("connection", (socket) => {
       }
     }
   );
- 
+
+  socket.on("leaving", async ({ room, room2, name }) => {
+    console.log("user leaving chat");
+
+    socket.leave(room);
+    socket.leave(room2);
+  });
+
   socket.on("disconnect", () => {
     console.log("user had left;;;");
+    socket.rooms = {};
+    socket.leaveAll();
   });
 });
 
