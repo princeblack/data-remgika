@@ -6,7 +6,7 @@ var morgan = require("morgan");
 const path = require('path');
 const cors = require("cors");
 const express = require("express");
-
+const bodyParser = require('body-parser')
 /** INIT THE SERVER */
 const app = express();
 
@@ -60,6 +60,7 @@ mongoose.connection.on("open", () => {
 
 
 /** REQUEST PARSERS */
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

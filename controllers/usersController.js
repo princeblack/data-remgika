@@ -1,35 +1,39 @@
 const User = require("../models/User");
-const fs = require("fs")
+const fs = require("fs");
 const createError = require("http-errors");
+const { use } = require("../routes/users");
+const nodemailer = require("nodemailer");
+const { Types } = require("mongoose");
+const { db } = require("../config/config");
 
 exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find()
-    .populate({
-      path: "friendReq",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "event",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "group",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "friend",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "messagerUsers",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
+      .populate({
+        path: "friendReq",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "event",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "group",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "friend",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "messagerUsers",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
       // .sort("lastName")
       .select("-password -__v -tokens._id  -role -updatedAt -createdAt");
     res.status(200).send(users);
@@ -270,32 +274,33 @@ exports.loginUser = async (req, res, next) => {
   const password = req.body.password;
   try {
     const user = await User.findOne({ email })
-    .populate({
-      path: "friendReq",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "event",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "group",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "friend",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
-    .populate({
-      path: "messagerUsers",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
+      .populate({
+        path: "friendReq",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "event",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "group",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "friend",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      })
+      .populate({
+        path: "messagerUsers",
+        select:
+          "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+      });
     // .select("-password -__v");
+    // console.log(user);
     const token = user.generateAuthToken();
     const canLogin = await user.checkPassword(password);
     if (!canLogin) throw new createError.NotFound();
@@ -314,6 +319,115 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
+exports.passwordForgot = async (req, res, next) => {
+  const email = req.body.email;
+  const origin = req.get("origin");
+  try {
+    const user = await User.findOne({ email });
+    // console.log(user);
+    if (!user){
+      return res.status(200).send({ email: "ok" });
+    };
+    const token = user.generateAuthToken();
+    user.resetToken = {
+      token: token,
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    };
+    await user.save();
+    await this.sendPasswordResetEmail(user, origin, res);
+    res.status(200).send({ succusses: "ok" });
+  } catch (error) {
+    next(error);
+  }
+};
+exports.sendPasswordResetEmail = async (account, origin,res) => {
+  try {
+    let message;
+    const resetUrl = `${origin}/account/reset-password/${account.resetToken.token}`;
+    message = `<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
+                   <p><a href="${resetUrl}">${resetUrl}</a></p>`;
+
+    let transporter = nodemailer.createTransport({
+      host: "smtp.hostinger.fr",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: "passwordforgot@remgika.com", // generated ethereal user
+        pass: "Africadmc01", // generated ethereal password
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    let mailOptions = {
+      from: '"Remgika" <passwordforgot@remgika.com>',
+      to: account.email,
+      subject: "Reset Password",
+      html: `<h4>Reset Password Email</h4>
+               ${message}`,
+    };
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Message sent: %s", info.messageId);
+      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+      res.render("contact", { msg: "Email has been sent" });
+    });
+  } catch (error) {
+    return error;
+  }
+};
+exports.validateResetToken = async(req, res, next) => {
+  try {
+    const token = req.body.token
+    const account = await User.findOne({
+      'resetToken.token': token,
+      'resetToken.expires': { $gt: Date.now() }
+  });
+
+  if (!account) throw 'Invalid token';
+  res.status(200).send(true);
+  } catch (error) {
+    next(error)
+  }
+}
+
+exports.resetPassword = async(req, res, next) => {
+  try {
+    const userToken = req.body.token
+    const password = req.body.password
+    // console.log(userToken);
+    console.log(password, 'passworddddddddddddddddddddd');
+    const account = await User.findOne({
+      'resetToken.token': userToken,
+      'resetToken.expires': { $gt: Date.now() }
+  });
+
+  if (!account) throw 'Invalid token';
+
+  // update password and remove reset token
+  account.password = password
+  account.passwordReset = Date.now();
+  account.resetToken = undefined;
+  const token = account.generateAuthToken();
+  const data = account.getPublicFields();
+  await account.save();
+  res
+      .status(200)
+      // .cookie("token", token, {
+      //   expires: new Date(Date.now() + 604800000),
+      //   secure: false, // if we are not using https
+      //   httpOnly: false,
+      // })
+      .send(data);
+  } catch (error) {
+    next(error)
+  }
+}
 exports.authenticateUser = async (req, res, next) => {
   res.status(200).send(req.user);
 };

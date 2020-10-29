@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const Address = require("./Address");
 const jwt = require("jsonwebtoken");
 const encryption = require("../lib/encryption");
 const env = require("../config/config");
@@ -24,6 +23,15 @@ const UserSchema = new Schema(
       type: String,
       required: true
     },
+    acceptTerms:{
+      type: Boolean
+    },
+    verificationToken:{
+      type: String
+    },
+    verified:{
+      type: Date
+    },
     role: {
       type: String,
       enum: ["Admin", "User"],
@@ -43,6 +51,13 @@ const UserSchema = new Schema(
         type: [Number],
         required: true
       }
+    },
+    resetToken: {
+      token: String,
+      expires: Date
+    },
+    passwordReset:{
+      type: Date
     },
     friend:[{
       type:Schema.Types.ObjectId,
