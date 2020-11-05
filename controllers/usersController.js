@@ -117,7 +117,7 @@ exports.updateUserImage = async (req, res, next) => {
     }
 
     const reqFiles = [];
-    const url = "http://" + req.get("host");
+    const url = "https://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
@@ -244,7 +244,7 @@ exports.addUser = async (req, res, next) => {
        res.status(400).send({res: true})
     }else{
       const reqFiles = [];
-      const url = "http://" + req.get("host");
+      const url = "https://" + req.get("host");
       for (var i = 0; i < req.files.length; i++) {
         reqFiles.push(url + "/static/images/" + req.files[i].filename);
       }

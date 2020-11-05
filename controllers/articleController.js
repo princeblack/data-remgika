@@ -7,7 +7,7 @@ const User = require("../models/User");
 exports.newArticle = async (req, res, next) => {
   try {
     const reqFiles = [];
-    const url = "http://" + req.get("host");
+    const url = "https://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
@@ -85,7 +85,7 @@ exports.updateArticle = async (req, res, next) => {
         fs.unlink(`public/images/${file}`, async () => {});
         const remove = Articles.updateOne({ _id: req.params.id },{$pull: {imgCollection: filename[i]}})
       }
-      const url = "http://" + req.get("host");
+      const url = "https://" + req.get("host");
       for (var i = 0; i < req.files.length; i++) {
         reqFiles.push(url + "/static/images/" + req.files[i].filename);
       }
@@ -94,7 +94,7 @@ exports.updateArticle = async (req, res, next) => {
     if (req.files.length === 0) {
       const image = await Articles.findOne({ _id: req.params.id });
       const filename = image.imgCollection;
-      const url = "http://" + req.get("host");
+      const url = "https://" + req.get("host");
       for (var i = 0; i < filename.length; i++) {
         // deleting the files works perfectly
         const file = filename[i].slice(36);
