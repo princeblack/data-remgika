@@ -23,6 +23,17 @@ const PlaygroundSchema = new Schema(
       type: String,
       required: true,
     },
+    location:{
+      type:{
+        type: String,
+        enum: ['Point'],
+        required: true
+      },
+      coordinates:{
+        type: [Number],
+        required: true
+      }
+    },
     like: {
       type: Number,
       default: 0
@@ -46,5 +57,11 @@ const PlaygroundSchema = new Schema(
     timestamps: true,
   }
 );
+PlaygroundSchema.index(
+  {title: "text"}
+  )
+  PlaygroundSchema.index({
+  location: "2dsphere"
+})
 
 module.exports = mongoose.model("Playground", PlaygroundSchema);

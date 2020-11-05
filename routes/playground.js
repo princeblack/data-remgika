@@ -8,7 +8,8 @@ const {
   updatePlayground,
   addPlayground,
   likeOnePlayground,
-  unLikeOnePlayground
+  unLikeOnePlayground,
+  playgroundGetAll
 } = require('../controllers/PlaygroundController');
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
@@ -16,7 +17,7 @@ const upload = require('../middleware/multer-config');
 
 router
   .route('/')
-  .get(getAllPlaygrounds)
+  .get(playgroundGetAll)
   .post(auth, upload.array('imgCollection', 3), addPlayground);
 
 router.route('/userPlay').get(auth, getMyPlaygrounds);
@@ -24,7 +25,7 @@ router.route('/userPlay').get(auth, getMyPlaygrounds);
 router
   .route('/:id')
   .get(getOnePlayground)
-  .delete(auth, isAdmin, deletePlayground)
+  .delete(auth, deletePlayground)
   .put(auth, upload.array('imgCollection', 3), updatePlayground);
 
 router

@@ -26,12 +26,6 @@ const UserSchema = new Schema(
     acceptTerms:{
       type: Boolean
     },
-    verificationToken:{
-      type: String
-    },
-    verified:{
-      type: Date
-    },
     role: {
       type: String,
       enum: ["Admin", "User"],

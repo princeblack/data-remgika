@@ -15,11 +15,11 @@ const auth = async (req, res, next) => {
       select:
         "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
     })
-    .populate({
-      path: "group",
-      select:
-        "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
-    })
+    // .populate({
+    //   path: "group",
+    //   select:
+    //     "-password -__v -tokens._id -email -role -updatedAt -createdAt ",
+    // })
     .populate({
       path: "friend",
       select:

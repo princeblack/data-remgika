@@ -12,8 +12,8 @@ exports.getGroupChats = async (req, res, next) => {
     skip = skip < 0 ? 0 : skip;
     limit = Math.min(50, Math.max(1, limit));
     const chats = await GroupChats.find({ groupId: req.params.id })
-    .skip(skip)
-    .limit(limit)
+      .skip(skip)
+      .limit(limit)
       .populate({
         path: "userId",
         select: "-password -__v -tokens._id -email -role -updatedAt -createdAt",
@@ -25,6 +25,7 @@ exports.getGroupChats = async (req, res, next) => {
         limit,
         has_more: total - (skip + limit) > 0,
       }});
+      
   } catch (error) {
     next(error);
   }

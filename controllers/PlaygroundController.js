@@ -4,13 +4,13 @@ const fs = require("fs");
 
 exports.getAllPlaygrounds = async (req, res, next) => {
   try {
-    const total= await Playground.countDocuments()
-    let {skip= 0, limit = 10}= req.query
+    const total = await Playground.countDocuments();
+    let { skip = 0, limit = 10 } = req.query;
     skip = Number(skip) || 0;
     limit = Number(limit) || 10;
     skip = skip < 0 ? 0 : skip;
     limit = Math.min(50, Math.max(1, limit));
- 
+
     const playgrounds = await Playground.find()
       .skip(skip)
       .limit(limit)
@@ -21,7 +21,40 @@ exports.getAllPlaygrounds = async (req, res, next) => {
     next(e);
   }
 };
-
+exports.playgroundGetAll = async (req, res, next) => {
+  try {
+    const letSplit = req.query.city;
+    const lng = parseFloat(letSplit[0]);
+    const lat = parseFloat(letSplit[1]);
+    const skip = req.query.skip;
+    const pageSize = 12;
+    const pageNum = pageSize * (skip - 1);
+    const count = await Playground.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lng, lat] },
+          $maxDistance: 15000,
+        },
+      },
+    }).limit(120);
+    const total = count.length;
+    const play = await Playground.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lng, lat] },
+          $maxDistance: 15000,
+        },
+      },
+    })
+      .skip(pageNum)
+      .limit(pageSize)
+      .sort("createdAt")
+      .select("-__v");
+    res.status(200).send({ play: play, count: total });
+  } catch (error) {
+    next(error);
+  }
+};
 exports.getMyPlaygrounds = async (req, res, next) => {
   try {
     const playgrounds = await Playground.find({ userID: req.user._id }).select(
@@ -44,8 +77,6 @@ exports.getOnePlayground = async (req, res, next) => {
 };
 
 exports.updatePlayground = async (req, res, next) => {
-
-  console.log(req.body.playground);
   const reqFiles = [];
   if (req.files) {
     const url = "https://" + req.get("host");
@@ -59,7 +90,6 @@ exports.updatePlayground = async (req, res, next) => {
         imgCollection: reqFiles,
       }
     : { ...req.body };
-
 
   Playground.findByIdAndUpdate(
     {
@@ -83,16 +113,25 @@ exports.updatePlayground = async (req, res, next) => {
 };
 
 exports.addPlayground = async (req, res, next) => {
+  console.log(req.body);
+
   try {
     const reqFiles = [];
-    const url = "https://" + req.get("host");
+    const url = "http://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
+    const letSplit = req.body.location.split(",");
+    const lng = parseFloat(letSplit[0]);
+    const lat = parseFloat(letSplit[1]);
+    const resultat = new Array(lng, lat);
+    const denver = { type: "Point", coordinates: resultat };
+
     const playground = new Playground({
       ...req.body,
       userID: req.user._id,
       imgCollection: reqFiles,
+      location: denver,
     });
     await playground.save();
     res.status(200).send(playground);
@@ -110,7 +149,6 @@ exports.deletePlayground = async (req, res, next) => {
     const file = filename[i].slice(36);
     fs.unlink(`public/images/${file}`, async () => {});
   }
-
   try {
     const playground = await Playground.findByIdAndDelete(req.params.id);
     res.status(200).json({
@@ -134,16 +172,13 @@ exports.likeOnePlayground = async (req, res, next) => {
       unLikeUser: { $in: [req.user._id] },
     });
 
-
     if (findLike.length === 0 && findUnLike.length === 0) {
-
       const like = await Playground.updateOne(
         { _id: req.params.id },
         { $inc: { like: +1 }, $addToSet: { likeUser: req.user._id } }
       );
       res.status(200).send({ message: "i like this play" });
     } else if (findLike.length > 0) {
-
       const like = await Playground.updateOne(
         { _id: req.params.id },
         { $inc: { like: -1 }, $pull: { likeUser: req.user._id } }
@@ -152,20 +187,17 @@ exports.likeOnePlayground = async (req, res, next) => {
         .status(200)
         .send({ message: "i already like this play so i dislike" });
     } else if (findUnLike.length > 0) {
-
       const like = await Playground.updateOne(
         { _id: req.params.id },
         {
-          $inc: { like: +1 , unlike: -1},
+          $inc: { like: +1, unlike: -1 },
           $addToSet: { likeUser: req.user._id },
           $pull: { unLikeUser: req.user._id },
         }
       );
-      res
-        .status(200)
-        .send({
-          message: "i already unlike this play so i disunlike and like",
-        });
+      res.status(200).send({
+        message: "i already unlike this play so i disunlike and like",
+      });
     }
   } catch (e) {
     next(e);
@@ -190,7 +222,6 @@ exports.unLikeOnePlayground = async (req, res, next) => {
       );
       res.status(200).send({ message: "i like this play" });
     } else if (findUnLike.length > 0) {
-
       const like = await Playground.updateOne(
         { _id: req.params.id },
         { $inc: { unlike: -1 }, $pull: { unLikeUser: req.user._id } }
@@ -199,20 +230,17 @@ exports.unLikeOnePlayground = async (req, res, next) => {
         .status(200)
         .send({ message: "i already like this play so i dislike" });
     } else if (findLike.length > 0) {
-
       const like = await Playground.updateOne(
         { _id: req.params.id },
-        { 
-          $inc: { like: -1, unlike: +1}, 
+        {
+          $inc: { like: -1, unlike: +1 },
           $pull: { likeUser: req.user._id },
-          $addToSet: { unLikeUser: req.user._id }
-       },
+          $addToSet: { unLikeUser: req.user._id },
+        }
       );
-      res
-        .status(200)
-        .send({
-          message: "i already unlike this play so i disunlike and like",
-        });
+      res.status(200).send({
+        message: "i already unlike this play so i disunlike and like",
+      });
     }
   } catch (e) {
     next(e);

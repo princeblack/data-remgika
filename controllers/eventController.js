@@ -5,8 +5,34 @@ const fs = require("fs");
 
 exports.getAllEvent = async (req, res, next) => {
   try {
-    const events = await Event.find().select("-__v");
-    res.status(200).send(events);
+    const letSplit = req.query.city;
+    const lng = parseFloat(letSplit[0]);
+    const lat = parseFloat(letSplit[1]);
+    const skip = req.query.skip;
+    const pageSize = 12;
+    const pageNum = pageSize * (skip - 1);
+    const count = await Event.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lng, lat] },
+          $maxDistance: 15000,
+        },
+      },
+    }).limit(120);
+    const total = count.length;
+    const event = await Event.find({
+      location: {
+        $near: {
+          $geometry: { type: "Point", coordinates: [lng, lat] },
+          $maxDistance: 15000,
+        },
+      },
+    })
+      .skip(pageNum)
+      .limit(pageSize)
+      .sort("createdAt")
+      .select("-__v");
+    res.status(200).send({ event: event, count: total });
   } catch (e) {
     next(e);
   }
@@ -99,10 +125,16 @@ exports.addEvent = async (req, res, next) => {
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
+    const letSplit = req.body.location.split(",");
+    const lng = parseFloat(letSplit[0]);
+    const lat = parseFloat(letSplit[1]);
+    const resultat = new Array(lng, lat);
+    const denver = { type: "Point", coordinates: resultat };
     const event = new Event({
       ...req.body,
       userId: req.user._id,
       imgCollection: reqFiles,
+      location: denver,
     });
     const evantId = event['_id'].toString()
     const user = await User.updateOne(

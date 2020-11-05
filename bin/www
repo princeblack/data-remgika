@@ -46,6 +46,24 @@ io.on("connection", (socket) => {
       .emit("welcome", { user: "admin", text: `${name}, has joind!` });
   });
   socket.on(
+    "groupChat",
+    async ({ message, room, name, userId }) => {
+      console.log("user connected to groupChat");
+      try {
+        const chat = new GroupChats({
+          userId: userId,
+          message: message,
+          groupId: room,
+        });
+
+        await chat.save();
+        io.to(room).emit('message', { name: name, user: userId, text: message})
+      } catch (error) {
+        return error;
+      }
+    }
+  );
+  socket.on(
     "sendMessage",
     async ({ message, room, room2, name, userId, files, friend }) => {
       const array = [room, room2];

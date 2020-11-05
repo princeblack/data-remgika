@@ -28,6 +28,17 @@ const EventSchema = new Schema(
       type: String,
       required: true,
     },
+    location:{
+      type:{
+        type: String,
+        enum: ['Point'],
+        required: true
+      },
+      coordinates:{
+        type: [Number],
+        required: true
+      }
+    },
     userId: {
       type: String,
       required: true,
@@ -45,5 +56,10 @@ const EventSchema = new Schema(
     timestamps: true,
   }
 );
+
+  EventSchema.index({
+  location: "2dsphere"
+})
+
 
 module.exports = mongoose.model('Event', EventSchema);
