@@ -179,8 +179,25 @@ exports.getArticlesByCity = async (req, res, next) => {
     const letSplit = req.query.city.split(",");
     const lng = parseFloat(letSplit[0]);
     const lat = parseFloat(letSplit[1]);
+    const skip = req.query.skip;
+    const pageSize = 12;
+    const pageNum = pageSize * (skip - 1);
 
     if (title && city) {
+      const count = await Articles.find(
+        {
+          $text: { $search: title },
+          prixOption: option,
+          location: {
+            $geoWithin: {
+              $centerSphere: [[lng, lat], distance / 3963.2],
+            },
+          },
+        },
+        { score: { $meta: "textScore" } }
+      ).limit(120);
+      const total = count.length;
+
       const articles = await Articles.find(
         {
           $text: { $search: title },
@@ -192,10 +209,23 @@ exports.getArticlesByCity = async (req, res, next) => {
           },
         },
         { score: { $meta: "textScore" } }
-      ).sort({ score: { $meta: "textScore" } });
+      )
+      .sort({ score: { $meta: "textScore" } })
+      .skip(pageNum)
+      .limit(pageSize)
 
-      res.status(200).send(articles);
+      res.status(200).send({ articles: articles , count: total });
+
     } else if (city && !title) {
+      const count = await Articles.find({
+        prixOption: option,
+        location: {
+          $geoWithin: {
+            $centerSphere: [[lng, lat], distance / 3963.2],
+          },
+        },
+      }).limit(120)
+      const total = count.length;
       const articles = await Articles.find({
         prixOption: option,
         location: {
@@ -203,12 +233,15 @@ exports.getArticlesByCity = async (req, res, next) => {
             $centerSphere: [[lng, lat], distance / 3963.2],
           },
         },
-      });
+      }).skip(pageNum)
+      .limit(pageSize)
 
-      res.status(200).send(articles);
+      res.status(200).send({ articles: articles , count: total });
     } else if (!city && !title) {
-      const articles = await Articles.aggregate([{ $sample: { size: 10 } }]);
-      res.status(200).send(articles);
+      const count = await Articles.aggregate([{ $sample: { size: 10 } },{$limit:120}])
+      const total = count.length;
+      const articles = await Articles.aggregate([{ $sample: { size: 10 } },{$skip : pageNum},{$limit : pageSize}]);
+      res.status(200).send({ articles: articles , count: total });
     }
   } catch (error) {
     next(error);
