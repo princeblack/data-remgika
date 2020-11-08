@@ -3,6 +3,9 @@ const User = require("../models/User");
 const createError = require('http-errors');
 const fs = require("fs");
 
+
+Event.createIndexes({location: "2dsphere"})
+
 exports.getAllEvent = async (req, res, next) => {
   try {
     const letSplit = req.query.city;

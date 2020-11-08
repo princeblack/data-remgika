@@ -4,6 +4,10 @@ const fs = require("fs");
 const { send } = require("process");
 const User = require("../models/User");
 
+Articles.createIndexes({title: "text"})
+Articles.createIndexes({location: "2dsphere"})
+
+
 exports.newArticle = async (req, res, next) => {
   try {
     const reqFiles = [];

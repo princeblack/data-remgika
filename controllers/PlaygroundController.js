@@ -2,6 +2,10 @@ const Playground = require("../models/Playground");
 const createError = require("http-errors");
 const fs = require("fs");
 
+
+Playground.createIndexes({title: "text"})
+Playground.createIndexes({location: "2dsphere"})
+
 exports.getAllPlaygrounds = async (req, res, next) => {
   try {
     const total = await Playground.countDocuments();
