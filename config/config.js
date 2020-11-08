@@ -12,7 +12,7 @@ const devConfig = {
 
 const prodConfig = {
   db:
-    'mongodb+srv://prince:6WwnujYhMW22HRxU@cluster0-3o6jr.mongodb.net/test?retryWrites=true&w=majority',
+    'mongodb+srv://prince:6WwnujYhMW22HRxU@cluster0-3o6jr.mongodb.net/remgika?retryWrites=true&w=majority',
   jwt_key: 'remgika'
 };
 
