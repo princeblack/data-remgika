@@ -4,12 +4,12 @@
  * Module dependencies.
  */
 
-// var app = require("../app");
+var app = require("../app");
 var debug = require("debug")("data-remgika:server");
 var http = require("http");
-// const GroupChats = require("../models/chat");
-// const UserChat = require("../models/UserChat");
-// const User = require("../models/User");
+const GroupChats = require("../models/chat");
+const UserChat = require("../models/UserChat");
+const User = require("../models/User");
 /**
  * Get port from environment and store in Express.
  */
@@ -32,109 +32,109 @@ server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
 
-// const io = require("socket.io")(server);
+const io = require("socket.io")(server);
 
-// io.on("connection", (socket) => {
-//   console.log("user connected");
+io.on("connection", (socket) => {
+  console.log("user connected");
 
-//   socket.on("join", async ({ name, room, userId }, callback) => {
-//     console.log("user connected to join");
+  socket.on("join", async ({ name, room, userId }, callback) => {
+    console.log("user connected to join");
 
-//     socket.join(room);
-//     socket.broadcast
-//       .to(room)
-//       .emit("welcome", { user: "admin", text: `${name}, has joind!` });
-//   });
-//   socket.on(
-//     "groupChat",
-//     async ({ message, room, name, userId }) => {
-//       console.log("user connected to groupChat");
-//       try {
-//         const chat = new GroupChats({
-//           userId: userId,
-//           message: message,
-//           groupId: room,
-//         });
+    socket.join(room);
+    socket.broadcast
+      .to(room)
+      .emit("welcome", { user: "admin", text: `${name}, has joind!` });
+  });
+  socket.on(
+    "groupChat",
+    async ({ message, room, name, userId }) => {
+      console.log("user connected to groupChat");
+      try {
+        const chat = new GroupChats({
+          userId: userId,
+          message: message,
+          groupId: room,
+        });
 
-//         await chat.save();
-//         io.to(room).emit('message', { name: name, user: userId, text: message})
-//       } catch (error) {
-//         return error;
-//       }
-//     }
-//   );
-//   socket.on(
-//     "sendMessage",
-//     async ({ message, room, room2, name, userId, files, friend }) => {
-//       const array = [room, room2];
-//       console.log("user connected to sendMessage");
-//       try {
-//         const chat = new UserChat({
-//           senderUserId: userId,
-//           message: message,
-//           files: files,
-//           room: array,
-//           receiverUserId: friend,
-//         });
+        await chat.save();
+        io.to(room).emit('message', { name: name, user: userId, text: message})
+      } catch (error) {
+        return error;
+      }
+    }
+  );
+  socket.on(
+    "sendMessage",
+    async ({ message, room, room2, name, userId, files, friend }) => {
+      const array = [room, room2];
+      console.log("user connected to sendMessage");
+      try {
+        const chat = new UserChat({
+          senderUserId: userId,
+          message: message,
+          files: files,
+          room: array,
+          receiverUserId: friend,
+        });
 
-//         await chat.save();
-//       } catch (error) {
-//         return error;
-//       }
-//     }
-//   );
-//   socket.on("chat", async ({ name, room, room2, userId }, callback) => {
-//     console.log("user connected to chat room");
+        await chat.save();
+      } catch (error) {
+        return error;
+      }
+    }
+  );
+  socket.on("chat", async ({ name, room, room2, userId }, callback) => {
+    console.log("user connected to chat room");
 
-//     socket.join([room, room2]);
-//     socket.broadcast
-//       .to(room)
-//       .to(room2)
-//       .emit("welcome", { user: "admin", text: `${name}, has joind!` });
-//   });
-//   socket.on(
-//     "chatMessage",
-//     async ({ message, room, room2, name, userId, files, friend }) => {
-//       const array = [room, room2];
-//       console.log("user connected to chatMessage");
+    socket.join([room, room2]);
+    socket.broadcast
+      .to(room)
+      .to(room2)
+      .emit("welcome", { user: "admin", text: `${name}, has joind!` });
+  });
+  socket.on(
+    "chatMessage",
+    async ({ message, room, room2, name, userId, files, friend }) => {
+      const array = [room, room2];
+      console.log("user connected to chatMessage");
 
-//       try {
-//         const chat = new UserChat({
-//           senderUserId: userId,
-//           message: message,
-//           files: files,
-//           room: array,
-//           receiverUserId: friend,
-//         });
+      try {
+        const chat = new UserChat({
+          senderUserId: userId,
+          message: message,
+          files: files,
+          room: array,
+          receiverUserId: friend,
+        });
 
-//         await chat.save();
-//         io.to(room2).to(room).emit("newChat", {
-//           name: name,
-//           user: userId,
-//           message: message,
-//           files: files,
-//           room: room,
-//           room2: room2,
-//         });
-//       } catch (error) {
-//         return error;
-//       }
-//     }
-//   );
+        await chat.save();
+        io.to(room2).to(room).emit("newChat", {
+          name: name,
+          user: userId,
+          message: message,
+          files: files,
+          room: room,
+          room2: room2,
+        });
+      } catch (error) {
+        return error;
+      }
+    }
+  );
 
-//   socket.on("leaving", async ({ room, room2, name }) => {
-//     console.log("user leaving chat");
+  socket.on("leaving", async ({ room, room2, name }) => {
+    console.log("user leaving chat");
 
-//     socket.leave(room);
-//     socket.leave(room2);
-//   });
+    socket.leave(room);
+    socket.leave(room2);
+  });
 
-//   socket.on("disconnect", () => {
-//     console.log("user had left;;;");
-//     socket.rooms = {};
-//     socket.leaveAll();
-//   });
-// });
+  socket.on("disconnect", () => {
+    console.log("user had left;;;");
+    socket.rooms = {};
+    socket.leaveAll();
+  });
+});
 
 /**
  * Normalize a port into a number, string, or false.
