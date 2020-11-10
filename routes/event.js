@@ -8,6 +8,7 @@ const {
   addEvent,
   getMyEvents,
   joinEvent,
+  getOneGroupEventSchema
 } = require("../controllers/eventController");
 const auth = require('../middleware/authenticator');
 const isAdmin = require('../middleware/rolesAuthenticator');
@@ -24,8 +25,11 @@ router
   .route("/:id")
   .get(getOneEvent)
   .delete(auth, isAdmin, deleteEvent)
-  .put(auth, isAdmin, upload.array("imgCollection", 3), updateEvent);
+  .put(auth,  upload.array("imgCollection", 3), updateEvent);
 
+router  
+  .route("/group/:id")
+  .get(auth,getOneGroupEventSchema)
 router
   .route("/participation/:id")
   .put(auth, joinEvent);

@@ -23,6 +23,6 @@ router
   .route("/:id")
   .get(getOneGroupEventSchema)
   .delete(auth,  deleteGroupEventSchema)
-  .put(auth, isAdmin, upload.array("imgCollection", 3), updateGroupEventSchema);
+  .put(auth,  upload.array("imgCollection", 3), updateGroupEventSchema);
 
 module.exports = router;

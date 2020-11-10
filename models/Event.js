@@ -41,7 +41,9 @@ const EventSchema = new Schema(
     },
     userId: {
       type: String,
-      required: true,
+    },
+    groupId: {
+      type: String,
     },
     participants:[{
       type:Schema.Types.ObjectId,

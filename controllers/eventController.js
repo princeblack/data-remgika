@@ -41,6 +41,16 @@ exports.getAllEvent = async (req, res, next) => {
   }
   
 };
+
+exports.getOneGroupEventSchema = async (req, res, next) => {
+  try {
+    const event = await Event.find({groupId: req.params.id}).select('-__v');
+    if (!event) throw new createError.NotFound();
+    res.status(200).send(event);
+  } catch (e) {
+    next(e);
+  }
+};
 exports.getMyEvents = async (req, res, next) => {
   try {
     const events = await Event.find({ userId: req.user._id }).select("-__v");
@@ -86,6 +96,7 @@ exports.deleteEvent = async (req, res, next) => {
 };
 
 exports.updateEvent = async (req, res, next) => {
+  console.log(req.body.event);
    const reqFiles = [];
   //  req.protocol + "://"
    if (req.file) {
@@ -124,7 +135,7 @@ exports.updateEvent = async (req, res, next) => {
 exports.addEvent = async (req, res, next) => {
   try {
     const reqFiles = [];
-    const url = "https://" + req.get("host");
+    const url = "http://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }

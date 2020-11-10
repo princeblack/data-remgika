@@ -1,5 +1,6 @@
-const GroupEventSchema = require('../models/GroupsEvents');
-const createError = require('http-errors');
+const GroupEventSchema = require("../models/Event");
+
+const createError = require("http-errors");
 const fs = require("fs");
 
 exports.getAllGroupEventSchema = async (req, res, next) => {
@@ -9,11 +10,12 @@ exports.getAllGroupEventSchema = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-  
 };
 exports.getMyGroupEventSchemas = async (req, res, next) => {
   try {
-    const events = await GroupEventSchema.find({ userId: req.user._id }).select("-__v");
+    const events = await GroupEventSchema.find({ userId: req.user._id }).select(
+      "-__v"
+    );
     res.status(200).send(events);
   } catch (e) {
     next(e);
@@ -21,7 +23,9 @@ exports.getMyGroupEventSchemas = async (req, res, next) => {
 };
 exports.getOneGroupEventSchema = async (req, res, next) => {
   try {
-    const event = await GroupEventSchema.find({groupId: req.params.id}).select('-__v');
+    const event = await GroupEventSchema.find({
+      groupId: req.params.id,
+    }).select("-__v");
     if (!event) throw new createError.NotFound();
     res.status(200).send(event);
   } catch (e) {
@@ -52,45 +56,54 @@ exports.deleteGroupEventSchema = async (req, res, next) => {
 };
 
 exports.updateGroupEventSchema = async (req, res, next) => {
-   const reqFiles = [];
+  
+  const reqFiles = [];
   //  req.protocol + "://"
-   if (req.file) {
-     const url = "https://" + req.get("host");
-     for (var i = 0; i < req.files.length; i++) {
-       reqFiles.push(url + "/static/images/" + req.files[i].filename);
-     }
-   }   
-   const event = req.file
-     ? {
-         ...JSON.parse(req.body.event),
-         imgCollection: reqFiles,
-       }
-     : { ...req.body };
-   GroupEventSchema.findByIdAndUpdate(
-     {
-       _id: req.params.id,
-     },
-     {
-       ...event,
-       _id: req.params.id,
-     }
-   )
-     .then(() =>
-       res.status(200).json({
-         message: "Object modifié !",
-       })
-     )
-     .catch((error) =>
-       res.status(400).json({
-         error,
-       })
-     );
+  if (req.file) {
+    const url = "https://" + req.get("host");
+    for (var i = 0; i < req.files.length; i++) {
+      reqFiles.push(url + "/static/images/" + req.files[i].filename);
+    }
+  }
+  try {
+    const event = req.file
+      ? {
+          ...req.body,
+          imgCollection: reqFiles,
+        }
+      : { ...req.body };
+   const updateEvent = await GroupEventSchema.findByIdAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      {
+        ...event,
+        _id: req.params.id,
+      }
+    );
+    res.status(200).json({
+      message: "Object modifié !",
+    });
+  } catch (error) {
+    next(error);
+  }
+
+  //  .then(() =>
+  //    res.status(200).json({
+  //      message: "Object modifié !",
+  //    })
+  //  )
+  //  .catch((error) =>
+  //    res.status(400).json({
+  //      error,
+  //    })
+  //  );
 };
 
 exports.addGroupEventSchema = async (req, res, next) => {
   try {
     const reqFiles = [];
-    const url = "https://" + req.get("host");
+    const url = "http://" + req.get("host");
     for (var i = 0; i < req.files.length; i++) {
       reqFiles.push(url + "/static/images/" + req.files[i].filename);
     }
